@@ -13,6 +13,20 @@
 </head>
 
 <body>
+    <?php
+    session_start();
+
+    // session_destroy();
+    // unset($_SESSION["IDOF"]);
+    // unset($_SESSION["PASSWORDOF"]);
+    // unset($_SESSION["IDUSERCAT"]);
+    // $_SESSION["USER_ID"] = $row['User_id'];
+    // $_SESSION["USERNAMES"] = $row['Username'];
+    // $_SESSION["PASSWORDS"] = $row['Passwords'];
+    // $_SESSION["NAME"] = $row['Name'];
+    // $_SESSION["EMAIL"] = $row['Email'];
+    // header("Location:index.php");
+    ?>
     <div id="app">
         <v-app>
             <v-navigation-drawer v-model="drawer" app>
@@ -68,22 +82,37 @@
                     <v-card-title>
                         เลือกวันที่จอง
                     </v-card-title>
+                    <v-divider></v-divider>
                     <v-card-action>
-                        <v-form action="../home.php" method="post">
-                            <v-date-picker v-model="range" is-range>
-                                <template v-slot="{ inputValue, inputEvents }">
-                                    <div class="flex justify-center items-center">
-                                        <input name="dateStart" :value="inputValue.start" v-on="inputEvents.start" class="border px-2 py-1 w-32 rounded focus:outline-none focus:border-indigo-300" />
-                                        <span class="ml-2 mr-2">ถังวันที่</span>
-                                        <input name="dateEnd" :value="inputValue.end" v-on="inputEvents.end" class="border px-2 py-1 w-32 rounded focus:outline-none focus:border-indigo-300" />
-                                        <v-btn type="submit">
-                                            ยืนยัน
-                                        </v-btn>
-                                    </div>
-                                </template>
-                            </v-date-picker>
-                            <!-- <v-btn type="submit"> -->
-                        </v-form>
+                            <v-card-text>
+                                <v-container class="ml-0">
+                                    <v-form action="../home.php" method="post">
+                                        <v-row>
+                                            <v-col>
+                                                <v-date-picker v-model="range" is-range>
+                                                    <template v-slot="{ inputValue, inputEvents }">
+                                                        <div class="flex justify-center items-center">
+                                                            <input name="dateStart" :value="inputValue.start" v-on="inputEvents.start" class="border px-2 py-1 w-32 rounded focus:outline-none focus:border-indigo-300" />
+                                                            <span class="ml-0 mr-12">ถึงวันที่</span>
+                                                            <input name="dateEnd" :value="inputValue.end" v-on="inputEvents.end" class="border px-2 py-1 w-32 rounded focus:outline-none focus:border-indigo-300" />
+                                                        </div>
+                                                    </template>
+                                                </v-date-picker>
+                                                <!-- <v-btn type="submit"> -->
+                                            </v-col>
+                                            <v-col>
+                                            </v-col>
+                                        </v-row>
+                                        <v-row>
+                                            <v-col>
+                                                <v-btn type="submit">
+                                                    ยืนยัน
+                                                </v-btn>
+                                            </v-col>
+                                        </v-row>
+                                    </v-form>
+                                </v-container>
+                            </v-card-text>
                     </v-card-action>
                 </v-card>
                 <v-card class="ma-2">

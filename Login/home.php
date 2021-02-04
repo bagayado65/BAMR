@@ -13,6 +13,33 @@
 </head>
 
 <body>
+    <?php
+    session_start();
+    error_reporting(error_reporting() & ~E_NOTICE);
+    $m = "";
+    if (count($_POST) > 0) {
+        include '../Database/connect.php';
+        $u = $_POST['username'];
+        $p = $_POST['password'];
+        $sql = "SELECT * FROM user WHERE Username = '$u' and Passwords = '$p' "; //จะดึงอะไรมาเปรียบเทียบ
+        $result = mysqli_query($conn, $sql);
+        $row = mysqli_fetch_assoc($result);
+        if (is_array($row)) {
+            $_SESSION["USER_ID"] = $row['User_id'];
+            $_SESSION["USERNAMES"] = $row['Username'];
+            $_SESSION["PASSWORDS"] = $row['Passwords'];
+            $_SESSION["NAME"] = $row['Name'];
+            $_SESSION["EMAIL"] = $row['Email'];
+        } else {
+            $m = "รหัสผ่าน/ชื่อผู้ใช้ ผิด!!";
+        }
+    }
+    if (isset($_SESSION["USER_ID"])) {
+        // if ($_SESSION[""] == '1') {
+        header("Location:../Calendar");
+        // }
+    }
+    ?>
     <div id="app">
         <v-app>
             <v-app-bar class="primary" absolute flat>
@@ -35,7 +62,7 @@
                         <v-col>
                             <v-btn class="success" @click="localhrefRegister" @mouseover="sw_msg1 = true" @mouseleave="sw_msg1 = false" depressed>
                                 <v-icon>
-                                mdi-account
+                                    mdi-account
                                 </v-icon>
                                 <span v-if="sw_msg1">register</span>
                             </v-btn>
@@ -51,32 +78,38 @@
                     Of user
                 </v-card-subtitle>
                 <v-card class="elevation-0">
-                <v-card-text>
-                    <v-form action="" method="post">
-                        <v-continer>
-                            <v-row>
-                                <v-col>
-                                    <v-text-field v-model="username" label="Username" name="username" />
-                                </v-col>
-                            </v-row>
-                            <v-row>
-                                <v-col>
-                                    <v-text-field v-model="password" label="Password" name="password" />
-                                </v-col>
-                            </v-row>
-                            <v-row>
-                                <v-col>
-                                    {{ username }} {{ password }}
-                                </v-col>
-                                <v-col cols="4">
-                                    <v-btn class="success" type="submit">
-                                        Confirm
-                                    </v-btn>
-                                </v-col>
-                            </v-row>
-                        </v-continer>
-                    </v-form>
-                </v-card-text>
+                    <v-card-text>
+                        <v-form action="" method="post">
+                            <v-continer>
+                                <v-row>
+                                    <v-col>
+                                        <v-text-field @input="cancelPuts()" v-model="username" label="Username" name="username" />
+                                    </v-col>
+                                </v-row>
+                                <v-row>
+                                    <v-col>
+                                        <v-text-field @input="cancelPuts()" v-model="password" label="Password" name="password" />
+                                    </v-col>
+                                </v-row>
+                                <v-row>
+                                    <v-col v-if="check_u_p != ''">
+                                        <v-alert type="error">
+                                            {{ check_u_p }}
+                                        </v-alert>
+                                    </v-col>
+                                </v-row>
+                                <v-row>
+                                    <v-col>
+                                    </v-col>
+                                    <v-col cols="4">
+                                        <v-btn class="success" type="submit">
+                                            Confirm
+                                        </v-btn>
+                                    </v-col>
+                                </v-row>
+                            </v-continer>
+                        </v-form>
+                    </v-card-text>
                 </v-card>
             </v-card>
         </v-app>
@@ -88,13 +121,17 @@
             el: '#app',
             vuetify: new Vuetify(),
             data: {
+                check_u_p: <?php echo "'" . $m . "'" ?>,
                 sw_msg: false,
                 sw_msg1: false,
             },
             methods: {
-                localhrefRegister: function () {
+                localhrefRegister: function() {
                     location.href = "../Register"
-                }
+                },
+                cancelPuts: function() {
+                    this.check_u_p = ''
+                },
             }
         })
     </script>

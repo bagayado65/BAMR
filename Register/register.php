@@ -317,6 +317,8 @@
                         this.password = null
                         this.confirmpassword = null
                         this.e6 -= 1
+                    } else if (this.e6 == 3){
+                        this.codesix = null
                     }
                 },
                 validateEmail: function() {
@@ -324,26 +326,8 @@
                     var g = this.emails
                     return emailReg.test(g)
                 },
-                swt_success: function(p) {
-                    const Toast = Swal.mixin({
-                        toast: true,
-                        position: 'bottom-end',
-                        showConfirmButton: false,
-                        timer: 2000,
-                        timerProgressBar: true,
-                        didOpen: (toast) => {
-                            toast.addEventListener('mouseenter', Swal.stopTimer)
-                            toast.addEventListener('mouseleave', Swal.resumeTimer)
-                        }
-                    })
-                    Toast.fire({
-                        icon: 'success',
-                        title: p
-                    })
-                },
             }
         })
     </script>
 </body>
-
 </html>
