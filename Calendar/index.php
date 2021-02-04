@@ -78,48 +78,90 @@
                 </v-continer>
             </v-app-bar>
             <v-main>
-                <v-card class="ma-2">
-                    <v-card-title>
-                        เลือกวันที่จอง
-                    </v-card-title>
-                    <v-divider></v-divider>
-                    <v-card-action>
-                            <v-card-text>
-                                <v-container class="ml-0">
-                                    <v-form action="../home.php" method="post">
-                                        <v-row>
-                                            <v-col>
-                                                <v-date-picker v-model="range" is-range>
-                                                    <template v-slot="{ inputValue, inputEvents }">
-                                                        <div class="flex justify-center items-center">
-                                                            <input name="dateStart" :value="inputValue.start" v-on="inputEvents.start" class="border px-2 py-1 w-32 rounded focus:outline-none focus:border-indigo-300" />
-                                                            <span class="ml-0 mr-12">ถึงวันที่</span>
-                                                            <input name="dateEnd" :value="inputValue.end" v-on="inputEvents.end" class="border px-2 py-1 w-32 rounded focus:outline-none focus:border-indigo-300" />
-                                                        </div>
-                                                    </template>
-                                                </v-date-picker>
-                                                <!-- <v-btn type="submit"> -->
-                                            </v-col>
-                                            <v-col>
-                                            </v-col>
-                                        </v-row>
-                                        <v-row>
-                                            <v-col>
-                                                <v-btn type="submit">
-                                                    ยืนยัน
-                                                </v-btn>
-                                            </v-col>
-                                        </v-row>
-                                    </v-form>
-                                </v-container>
-                            </v-card-text>
-                    </v-card-action>
-                </v-card>
-                <v-card class="ma-2">
-                    <v-card-title>
-                        วันที่จองแล้ว
-                    </v-card-title>
-                </v-card>
+                <v-container class="ml-0">
+                    <v-row>
+                        <v-col>
+                            <v-card>
+                                <v-card-title>
+                                    เลือกวันที่จอง
+                                </v-card-title>
+                                <v-divider></v-divider>
+                                <v-card-action>
+                                    <v-card-text>
+                                        <v-container>
+                                            <v-form action="../home.php" method="post">
+                                                <v-row>
+                                                    <v-col class="ml-7">
+                                                        <v-date-picker v-model="range" is-range>
+                                                            <template v-slot="{ inputValue, inputEvents }">
+                                                                <div class="flex justify-center items-center">
+                                                                    <input style="width:95px" name="dateStart" :value="inputValue.start" v-on="inputEvents.start" class="border px-2 py-1 w-32 rounded focus:outline-none focus:border-indigo-300" />
+                                                                    <span class="ml-2 mr-2">ถึงวันที่</span>
+                                                                    <input style="width:95px" name="dateEnd" :value="inputValue.end" v-on="inputEvents.end" class="border px-2 py-1 w-32 rounded focus:outline-none focus:border-indigo-300" />
+                                                                </div>
+                                                            </template>
+                                                        </v-date-picker>
+                                                    </v-col>
+                                                </v-row>
+                                                <v-row>
+                                                    <v-col>
+                                                        <v-dialog ref="dialog1" v-model="modal2" :return-value.sync="time" persistent width="290px">
+                                                            <template v-slot:activator="{ on, attrs }">
+                                                                <v-text-field v-model="time" label="เวลาเริ่ม" prepend-icon="mdi-clock-time-four-outline" readonly v-bind="attrs" v-on="on"></v-text-field>
+                                                            </template>
+                                                            <v-time-picker v-if="modal2" v-model="time" full-width>
+                                                                <v-spacer></v-spacer>
+                                                                <v-btn text color="primary" @click="modal2 = false">
+                                                                    Cancel
+                                                                </v-btn>
+                                                                <v-btn text color="primary" @click="$refs.dialog1.save(time)">
+                                                                    OK
+                                                                </v-btn>
+                                                            </v-time-picker>
+                                                        </v-dialog>
+                                                    </v-col>
+                                                    <v-col>
+                                                        <v-dialog ref="dialog" v-model="modal1" :return-value.sync="time1" persistent width="290px">
+                                                            <template v-slot:activator="{ on, attrs }">
+                                                                <v-text-field v-model="time1" label="เวลาจบ" prepend-icon="mdi-clock-time-four-outline" readonly v-bind="attrs" v-on="on"></v-text-field>
+                                                            </template>
+                                                            <v-time-picker v-if="modal1" v-model="time1" full-width>
+                                                                <v-spacer></v-spacer>
+                                                                <v-btn text color="primary" @click="modal1 = false">
+                                                                    Cancel
+                                                                </v-btn>
+                                                                <v-btn text color="primary" @click="$refs.dialog.save(time1)">
+                                                                    OK
+                                                                </v-btn>
+                                                            </v-time-picker>
+                                                        </v-dialog>
+                                                    </v-col>
+                                                    <v-col class="mr-10">
+                                                        <v-btn class="ml-5 mt-4" @click="refreshbtn()" icon>
+                                                            <v-icon>
+                                                                mdi-replay
+                                                            </v-icon>
+                                                        </v-btn>
+                                                    </v-col>
+                                                </v-row>
+                                                <v-row>
+                                                    <v-col>
+                                                        <v-btn type="submit">
+                                                            ยืนยัน
+                                                        </v-btn>
+                                                    </v-col>
+                                                </v-row>
+                                            </v-form>
+                                        </v-container>
+                                    </v-card-text>
+                                </v-card-action>
+                            </v-card>
+                        </v-col>
+                        <v-col>
+
+                        </v-col>
+                    </v-row>
+                </v-container>
             </v-main>
         </v-app>
     </div>
@@ -140,6 +182,11 @@
                     start: new Date(),
                     end: datetomorrow.setDate(datetomorrow.getDate() + 1),
                 },
+                time1: null,
+                modal1: false,
+                time: null,
+                menu2: false,
+                modal2: false,
             },
             methods: {
                 drawA: function() {
@@ -148,6 +195,10 @@
                 localhrefLogin: function() {
                     location.href = "../Login"
                 },
+                refreshbtn: function() {
+                    this.time = null
+                    this.time1 = null
+                }
             }
         })
     </script>
