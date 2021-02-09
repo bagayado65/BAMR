@@ -29,7 +29,7 @@
     ?>
     <div id="app">
         <v-app>
-            <v-navigation-drawer v-model="drawer" app>
+            <!-- <v-navigation-drawer v-model="drawer" app>
                 <v-list nav dense>
                     <v-list-item-group v-model="group" active-class="deep-purple--text text--accent-4">
                         <v-list-item @click="home">
@@ -47,9 +47,9 @@
                         </v-list-item>
                     </v-list-item-group>
                 </v-list>
-            </v-navigation-drawer>
+            </v-navigation-drawer> -->
             <v-app-bar class="primary" absolute flat app>
-                <v-app-bar-nav-icon color="white" @click="drawA"></v-app-bar-nav-icon>
+                <!-- <v-app-bar-nav-icon color="white" @click="drawA()"></v-app-bar-nav-icon> -->
                 <v-app-bar-title>
                     <h2 style="color: white;">
                         Meeting Room
@@ -59,7 +59,7 @@
                 <v-continer>
                     <v-row>
                         <v-col cols="5" sm="auto">
-                            <v-btn class="light-blue accent-4" @click="" @mouseover="sw_msg = true" @mouseleave="sw_msg = false" depressed>
+                            <v-btn class="light-blue accent-4" @click="local_account()" @mouseover="sw_msg = true" @mouseleave="sw_msg = false" depressed>
                                 <v-icon color="white">
                                     mdi-account-card-details
                                 </v-icon>
@@ -67,7 +67,7 @@
                             </v-btn>
                         </v-col>
                         <v-col cols="5" sm="auto">
-                            <v-btn class="success" @click="" @mouseover="sw_msg1 = true" @mouseleave="sw_msg1 = false" depressed>
+                            <v-btn class="success" @click="local_logout()" @mouseover="sw_msg1 = true" @mouseleave="sw_msg1 = false" depressed>
                                 <v-icon>
                                     mdi-logout-variant
                                 </v-icon>
@@ -149,51 +149,53 @@
                     </v-row>
                     <v-row>
                         <v-col>
-                            <v-card>
-                                <template>
-                                    <v-simple-table id="myTable" fixed-header height="600px">
-                                        <template v-slot:default>
-                                            <thead>
-                                                <tr>
-                                                    <th class="text-left">
-                                                        ชื่อห้อง
-                                                    </th>
-                                                    <th class="text-left">
-                                                        วันเริ่ม
-                                                    </th>
-                                                    <th class="text-left">
-                                                        วันจบ
-                                                    </th>
-                                                    <th class="text-left">
-                                                        หมายเหตุ
-                                                    </th>
-                                                    <th class="text-left">
-                                                        actions
-                                                    </th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr v-for="item in dataCld_fetchall" :key="item.NameRoom">
-                                                    <td>{{ item.NameRoom }}</td>
-                                                    <td>{{ item.Start_day }} เวลา {{ item.Start_time }}</td>
-                                                    <td>{{ item.End_day }} เวลา {{ item.End_time }}</td>
-                                                    <td>{{ item.Description }}</td>
-                                                    <td>
-                                                        <v-btn @click="edit_data(item.MeetingRoom_ID)" color="orange" icon>
-                                                            <v-icon class="mt-2">mdi-border-color</v-icon>
-                                                        </v-btn>
-                                                        <v-btn color="red" icon>
-                                                            <v-icon>
-                                                                mdi-delete
-                                                            </v-icon>
-                                                        </v-btn>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </template>
-                                    </v-simple-table>
-                                </template>
-                            </v-card>
+                            <div>
+                                <v-card>
+                                    <template>
+                                        <v-simple-table id="myTable" fixed-header height="600px">
+                                            <template v-slot:default>
+                                                <thead>
+                                                    <tr>
+                                                        <th class="text-left">
+                                                            ชื่อห้อง
+                                                        </th>
+                                                        <th class="text-left">
+                                                            วันเริ่ม
+                                                        </th>
+                                                        <th class="text-left">
+                                                            วันจบ
+                                                        </th>
+                                                        <th class="text-left">
+                                                            หมายเหตุ
+                                                        </th>
+                                                        <th class="text-left">
+                                                            actions
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr v-for="item in dataCld_fetchall" :key="item.NameRoom">
+                                                        <td>{{ item.NameRoom }}</td>
+                                                        <td>{{ item.Start_day }} เวลา {{ item.Start_time }}</td>
+                                                        <td>{{ item.End_day }} เวลา {{ item.End_time }}</td>
+                                                        <td>{{ item.Description }}</td>
+                                                        <td>
+                                                            <v-btn @click="edit_data(item.MeetingRoom_ID)" color="orange" icon>
+                                                                <v-icon class="mt-2">mdi-border-color</v-icon>
+                                                            </v-btn>
+                                                            <v-btn @click="delete_data(item.MeetingRoom_ID)" color="red" icon>
+                                                                <v-icon>
+                                                                    mdi-delete
+                                                                </v-icon>
+                                                            </v-btn>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </template>
+                                        </v-simple-table>
+                                    </template>
+                                </v-card>
+                            </div>
                             <v-dialog v-model="editcard" persistent max-width="600" max-height="600">
                                 <v-card min-height="400">
                                     <v-card-title>
@@ -232,7 +234,7 @@
                                                     <v-col sm="9">
                                                     </v-col>
                                                     <v-col sm="2">
-                                                        <v-btn @click="insert_axios()" class="ml-5 mt-4" color="success">
+                                                        <v-btn @click="edit_axios()" class="ml-5 mt-4" color="success">
                                                             ยืนยัน
                                                         </v-btn>
                                                     </v-col>
@@ -261,7 +263,7 @@
             table = document.getElementById("myTable");
             tr = table.getElementsByTagName("tr");
             for (i = 0; i < tr.length; i++) {
-                td = tr[i].getElementsByTagName("td")[1];
+                td = tr[i].getElementsByTagName("td")[0];
                 if (td) {
                     txtValue = td.textContent || td.innerText;
                     if (txtValue.toUpperCase().indexOf(filter) > -1) {
@@ -276,6 +278,7 @@
         var app = new Vue({
             el: '#app',
             vuetify: new Vuetify(),
+            inject: ['reload'],
             data: {
                 dataCld_insert: {
                     MeetingRoom_ID: null,
@@ -292,16 +295,16 @@
                     Whotime_Create: '',
                     Whotime_Edit: '',
                 },
-                dataShow_fectsingle: {
-                    NameRoom: '',
-                    Start_day: '',
-                    Start_time: '',
-                    End_day: '',
-                    End_time: '',
-                    Description: '',
-                },
+                // dataShow_fectsingle: {
+                //     NameRoom: '',
+                //     Start_day: '',
+                //     Start_time: '',
+                //     End_day: '',
+                //     End_time: '',
+                //     Description: '',
+                // },
                 dataCld_edit: {
-                    NameRoom: '',
+                    NameRoom: null,
                     Start_day: '',
                     Start_time: '',
                     End_day: '',
@@ -313,7 +316,7 @@
                 dataCld_fetchall: '',
                 sw_msg: false,
                 sw_msg1: false,
-                drawer: false,
+                // drawer: false,
                 dlcard: false,
                 editcard: false,
                 range: {
@@ -331,8 +334,14 @@
                 test_date: function() {
                     console.log(this.dataCld_insert.User_ID)
                 },
-                drawA: function() {
-                    this.drawer = !this.drawer
+                // drawA: function() {
+                //     this.drawer = !this.drawer
+                // },
+                local_logout: function() {
+                    location.href = "../Login/log_out.php"
+                },
+                local_account: function() {
+                    location.href = "../Profile/"
                 },
                 localhrefLogin: function() {
                     location.href = "../Login"
@@ -343,57 +352,96 @@
                 },
                 fetchAllData: function() {
                     axios.post('../Database/db_Calendar.php', {
-                        action: 'fetchall'
+                        action: 'fetchall',
+                        User_ID: <?php echo "'" . $_SESSION["USER_ID"] . "'" ?>
                     }).then(function(response) {
                         app.dataCld_fetchall = response.data;
                         console.log(app.dataCld_fetchall);
                     });
                 },
-                fetch_idData: function() {
+                fetch_idData: function(id) {
                     axios.post('../Database/db_Calendar.php', {
                         action: 'fetchSingle',
                         User_ID: <?php echo "'" . $_SESSION["USER_ID"] . "'" ?>,
-                        MeetingRoom_ID: this.dataCld_edit.MeetingRoom_ID
+                        MeetingRoom_ID: id
                     }).then(function(response) {
-                        app.dataShow_fectsingle.NameRoom = response.data.NameRoom;
-                        app.dataShow_fectsingle.Start_day = response.data.Start_day;
-                        app.dataShow_fectsingle.Start_time = response.data.Start_time;
-                        app.dataShow_fectsingle.End_day = response.data.End_day;
-                        app.dataShow_fectsingle.End_time = response.data.End_time;
-                        app.dataShow_fectsingle.Description = response.data.Description;
-                        console.log(app.dataShow_fectsingle);
+                        app.dataCld_edit.NameRoom = response.data.NameRoom;
+                        app.dataCld_edit.Start_day = response.data.Start_day;
+                        app.dataCld_edit.Start_time = response.data.Start_time;
+                        app.dataCld_edit.End_day = response.data.End_day;
+                        app.dataCld_edit.End_time = response.data.End_time;
+                        app.dataCld_edit.Description = response.data.Description;
+                        app.range.start = response.data.Start_day + 'T' + response.data.Start_time;
+                        app.range.end = response.data.End_day + 'T' + response.data.End_time;
+                        console.log(app.dataCld_edit);
                     });
+                    console.log(this.dataCld_edit)
                 },
                 edit_data: function(id) {
                     this.dataCld_edit.MeetingRoom_ID = id
-                    app.fetch_idData()
-                    this.dataCld_edit.NameRoom = this.dataShow_fectsingle.NameRoom
-                    this.dataCld_edit.Start_day = this.dataShow_fectsingle.Start_day
-                    this.dataCld_edit.Start_time = this.dataShow_fectsingle.Start_time
-                    this.dataCld_edit.End_day = this.dataShow_fectsingle.End_day
-                    this.dataCld_edit.End_time = this.dataShow_fectsingle.End_time
-                    this.dataCld_edit.Description = this.dataShow_fectsingle.Description
+                    app.fetch_idData(id)
                     console.log(this.dataCld_edit)
-                    // this.editcard = true
+                    this.editcard = true
                 },
                 edit_axios: function() {
-                    axios.post('../Database/db_Calendar.php', {
-                        action: 'update',
-                        NameRoom: this.dataCld_edit.NameRoom,
-                        Start_day: this.dataCld_edit.Start_day,
-                        Start_time: this.dataCld_edit.Start_time,
-                        End_day: this.dataCld_edit.End_day,
-                        End_time: this.dataCld_edit.End_time,
-                        Description: this.dataCld_edit.Description,
-                        MeetingRoom_ID: id,
-                        User_ID: this.dataCld_edit.User_ID
-                    }).then(function(response) {
-                        // application.fetchAllData();
-                        // application.first_name = '';
-                        // application.last_name = '';
-                        // application.hiddenId = '';
-                        // alert(response.data.message);
-                    });
+                    if (this.dataCld_edit.NameRoom !== '') {
+                        if (this.range.start != '' && this.range.end != '') {
+                            this.range.start = this.range.start.split("T")
+                            this.range.end = this.range.end.split("T")
+                            this.dataCld_edit.Start_day = this.range.start[0]
+                            this.dataCld_edit.Start_time = this.range.start[1]
+                            this.dataCld_edit.End_day = this.range.end[0]
+                            this.dataCld_edit.End_time = this.range.end[1]
+                            axios.post('../Database/db_Calendar.php', {
+                                action: 'update',
+                                NameRoom: app.dataCld_edit.NameRoom,
+                                Start_day: app.dataCld_edit.Start_day,
+                                Start_time: app.dataCld_edit.Start_time,
+                                End_day: app.dataCld_edit.End_day,
+                                End_time: app.dataCld_edit.End_time,
+                                Description: app.dataCld_edit.Description,
+                                MeetingRoom_ID: app.dataCld_edit.MeetingRoom_ID
+                            }).then(function(response) {
+                                app.fetchAllData();
+                                app.cencalmeetcard();
+                                app.dataCld_edit.NameRoom = '';
+                                app.dataCld_edit.Start_day = '';
+                                app.dataCld_edit.Start_time = '';
+                                app.dataCld_edit.End_day = '';
+                                app.dataCld_edit.End_time = '';
+                                app.dataCld_edit.Description = '';
+                                const Toast = Swal.mixin({
+                                    toast: true,
+                                    position: 'bottom-end',
+                                    showConfirmButton: false,
+                                    timer: 2000,
+                                    timerProgressBar: true,
+                                    didOpen: (toast) => {
+                                        toast.addEventListener('mouseenter', Swal.stopTimer)
+                                        toast.addEventListener('mouseleave', Swal.resumeTimer)
+                                    }
+                                })
+                                Toast.fire({
+                                    icon: 'success',
+                                    title: 'แก้ไขวันห้องประชุม สำเร็จ!!'
+                                })
+                            });
+                            this.range.start = '';
+                            this.range.end = '';
+                        } else {
+                            Swal.fire(
+                                'ไม่มีข้อมูล!!',
+                                'วันที่/เวลา!!',
+                                'warning'
+                            )
+                        }
+                    } else {
+                        Swal.fire(
+                            'ไม่มีข้อมูล!!',
+                            'ชื่อห้อง!!',
+                            'warning'
+                        )
+                    }
                 },
                 insert_axios: function() {
                     if (this.dataCld_insert.NameRoom !== '') {
@@ -424,8 +472,8 @@
                                 Whotime_Edit: this.dataCld_insert.Whotime_Edit,
 
                             }).then(function(response) {
-                                app.fetch_idData();
                                 app.cencalmeetcard();
+                                app.fetchAllData();
                                 const Toast = Swal.mixin({
                                     toast: true,
                                     position: 'bottom-end',
@@ -450,7 +498,6 @@
                             this.dataCld_insert.End_day = '';
                             this.dataCld_insert.End_time = '';
                             this.dataCld_insert.Description = '';
-                            this.fetchAllData()
                         } else {
                             Swal.fire(
                                 'ไม่มีข้อมูล!!',
@@ -465,8 +512,33 @@
                             'warning'
                         )
                     }
-
                 },
+                delete_data: function(id) {
+                    Swal.fire({
+                        title: 'ต้องการลบ?',
+                        text: "คุณจะไม่สามารถเปลี่ยนกลับได้!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        cancelButtonText: 'ยกเลิก',
+                        confirmButtonText: 'ตกลง!'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            axios.post('../Database/db_Calendar.php', {
+                                action: 'delete',
+                                MeetingRoom_ID: id
+                            }).then(function(response) {
+                                app.fetchAllData();
+                            });
+                            Swal.fire(
+                                'ลบสำเร็จ!',
+                                'คุณได้ลบวันนัดประชุมแล้ว!!',
+                                'success'
+                            )
+                        }
+                    })
+                }
             }
         })
     </script>

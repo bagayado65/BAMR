@@ -30,6 +30,7 @@
             $_SESSION["PASSWORDS"] = $row['Passwords'];
             $_SESSION["NAME"] = $row['Name'];
             $_SESSION["EMAIL"] = $row['Email'];
+            $_SESSION["PHONE"] = $row['Phone'];
         } else {
             $m = "รหัสผ่าน/ชื่อผู้ใช้ ผิด!!";
         }

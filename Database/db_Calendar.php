@@ -5,7 +5,7 @@ $data = array();
 if($received_data->action == 'fetchall')
 {
  $query = "
- SELECT MeetingRoom_ID, NameRoom, Start_day, Start_time, End_day, End_time, Description FROM meetingroom ORDER BY MeetingRoom_ID ASC
+ SELECT MeetingRoom_ID, NameRoom, Start_day, Start_time, End_day, End_time, Description FROM meetingroom  WHERE User_ID = '" . $received_data->User_ID . "' ORDER BY MeetingRoom_ID ASC
  ";
 //   ORDER BY User_id DESC
  $statement = $connect->prepare($query);
@@ -104,14 +104,13 @@ if($received_data->action == 'fetchSingle')
 if($received_data->action == 'update')
 {
  $data = array(
-      ':MeetingRoom_ID' => $received_data->MeetingRoom_ID,
-      ':User_ID' => $received_data->User_ID,
-      ':NameRoom' => $received_data->NameRoom,
-      ':Start_day' => $received_data->Start_day,
-      ':Start_time' => $received_data->Start_time,
-      ':End_day' => $received_data->End_day,
-      ':End_time' => $received_data->End_time,
-      ':Description' => $received_data->Description
+   ':NameRoom' => $received_data->NameRoom,
+   ':Start_day' => $received_data->Start_day,
+   ':Start_time' => $received_data->Start_time,
+   ':End_day' => $received_data->End_day,
+   ':End_time' => $received_data->End_time,
+   ':Description' => $received_data->Description,
+   ':MeetingRoom_ID' => $received_data->MeetingRoom_ID
  );
 
  $query = "
@@ -121,8 +120,8 @@ if($received_data->action == 'update')
  Start_time = :Start_time,
  End_day = :End_day,
  End_time = :End_time,
- Description = :Description,
- WHERE User_ID = :User_ID and MeetingRoom_ID = :MeetingRoom_ID
+ Description = :Description
+ WHERE MeetingRoom_ID = :MeetingRoom_ID
  ";
 
  $statement = $connect->prepare($query);
@@ -139,8 +138,8 @@ if($received_data->action == 'update')
 if($received_data->action == 'delete')
 {
  $query = "
- DELETE FROM tbl_sample 
- WHERE id = '".$received_data->id."'
+ DELETE FROM meetingroom 
+ WHERE MeetingRoom_ID = '".$received_data->MeetingRoom_ID."'
  ";
 
  $statement = $connect->prepare($query);
