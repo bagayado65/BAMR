@@ -69,7 +69,7 @@
                                 <v-row>
                                     <v-col>
                                         <v-card-text>
-                                            <v-text-field v-model="emails" :label="item.Email"></v-text-field>
+                                            <v-text> {{ item.Email }} </v-text>
                                         </v-card-text>
                                     </v-col>
                                 </v-row>
@@ -77,18 +77,18 @@
                                 <v-row>
                                     <v-col>
                                         <v-card-text>
-                                            <v-text-field v-model="phones" :label="item.Phone"></v-text-field>
+                                            <v-text>{{ item.Phone }}</v-text>
                                         </v-card-text>
                                     </v-col>
                                 </v-row>
-                                <v-divider></v-divider>
+                                <!-- <v-divider></v-divider>
                                 <v-row>
                                     <v-col>
                                         <v-btn @click="email_edit_axios()" class="white--text" color="orange" min-width="100%" min-height="100%">
                                             แก้ไข!!
                                         </v-btn>
                                     </v-col>
-                                </v-row>
+                                </v-row> -->
                             </v-card>
                         </v-col>
                         <v-col>

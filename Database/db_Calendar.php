@@ -5,7 +5,7 @@ $data = array();
 if($received_data->action == 'fetchall')
 {
  $query = "
- SELECT MeetingRoom_ID, NameRoom, Start_day, Start_time, End_day, End_time, Description FROM meetingroom  WHERE User_ID = '" . $received_data->User_ID . "' ORDER BY MeetingRoom_ID ASC
+ SELECT MeetingRoom_ID, NameRoom, Sday, Stime, Etime, Description FROM nameroom,meetingroom  WHERE meetingroom.NameRoom_ID = nameroom.NameRoom_ID and User_ID = '" . $received_data->User_ID . "' ORDER BY MeetingRoom_ID ASC
  ";
 //   ORDER BY User_id DESC
  $statement = $connect->prepare($query);
@@ -16,53 +16,50 @@ if($received_data->action == 'fetchall')
  }
  echo json_encode($data);
 }
+if ($received_data->action == 'fetchalls_data') {
+  $query = "
+ SELECT MeetingRoom_ID, NameRoom, Sday, Stime, Etime, Description FROM nameroom,meetingroom  WHERE meetingroom.NameRoom_ID = nameroom.NameRoom_ID ORDER BY MeetingRoom_ID ASC
+ ";
+  //   ORDER BY User_id DESC
+  $statement = $connect->prepare($query);
+  $statement->execute();
+  while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
+    $data[] = $row;
+  }
+  echo json_encode($data);
+}
 if($received_data->action == 'insert')
 {
  $data = array(
     ':MeetingRoom_ID' => $received_data->MeetingRoom_ID,
     ':User_ID' => $received_data->User_ID,
-    ':NameRoom' => $received_data->NameRoom,
+    ':NameRoom_ID' => $received_data->NameRoom_ID,
     ':Numbar_User' => $received_data->Numbar_User,
     ':Start_day' => $received_data->Start_day,
     ':Start_time' => $received_data->Start_time,
-    ':End_day' => $received_data->End_day,
     ':End_time' => $received_data->End_time,
-    ':Description' => $received_data->Description,
-    ':WhoCreate' => $received_data->WhoCreate,
-    ':WhoEdit' => $received_data->WhoEdit,
-    ':Whotime_Create' => $received_data->Whotime_Create,
-    ':Whotime_Edit' => $received_data->Whotime_Edit
-
+    ':Description' => $received_data->Description
  );
 
  $query = "
  INSERT INTO meetingroom 
  (MeetingRoom_ID,
  User_ID,
- NameRoom,
+ NameRoom_ID,
  Numbar_User,
- Start_day,
- Start_time,
- End_day,
- End_time,
- Description,
- WhoCreate,
- WhoEdit,
- Whotime_Create,
- Whotime_Edit) 
+ Sday,
+ Stime,
+ Etime,
+ Description) 
  VALUES (
  :MeetingRoom_ID,
- :User_ID,:NameRoom,
+ :User_ID,
+ :NameRoom_ID,
  :Numbar_User,
  :Start_day,
  :Start_time,
- :End_day,
  :End_time,
- :Description,
- :WhoCreate,
- :WhoEdit,
- :Whotime_Create,
- :Whotime_Edit)
+ :Description)
  ";
 
  $statement = $connect->prepare($query);
@@ -78,8 +75,7 @@ if($received_data->action == 'insert')
 if($received_data->action == 'fetchSingle')
 {
  $query = "
- SELECT NameRoom, Start_day, Start_time, End_day, End_time, Description FROM meetingroom
- WHERE User_id = '".$received_data->User_ID. "' and MeetingRoom_ID = '".$received_data->MeetingRoom_ID."'
+ SELECT meetingroom.NameRoom_ID, Sday, Stime, Etime, Description FROM nameroom,meetingroom  WHERE meetingroom.NameRoom_ID = nameroom.NameRoom_ID and User_id = '".$received_data->User_ID. "' and MeetingRoom_ID = '".$received_data->MeetingRoom_ID."'
  ";
 
  $statement = $connect->prepare($query);
@@ -90,11 +86,10 @@ if($received_data->action == 'fetchSingle')
 
  foreach($result as $row)
  {
-  $data['NameRoom'] = $row['NameRoom'];
-  $data['Start_day'] = $row['Start_day'];
-  $data['Start_time'] = $row['Start_time'];
-  $data['End_day'] = $row['End_day'];
-  $data['End_time'] = $row['End_time'];
+  $data['NameRoom_ID'] = $row['NameRoom_ID'];
+  $data['Sday'] = $row['Sday'];
+  $data['Stime'] = $row['Stime'];
+  $data['Etime'] = $row['Etime'];
   $data['Description'] = $row['Description'];
 
  }
@@ -104,10 +99,9 @@ if($received_data->action == 'fetchSingle')
 if($received_data->action == 'update')
 {
  $data = array(
-   ':NameRoom' => $received_data->NameRoom,
+   ':NameRoom_ID' => $received_data->NameRoom_ID,
    ':Start_day' => $received_data->Start_day,
    ':Start_time' => $received_data->Start_time,
-   ':End_day' => $received_data->End_day,
    ':End_time' => $received_data->End_time,
    ':Description' => $received_data->Description,
    ':MeetingRoom_ID' => $received_data->MeetingRoom_ID
@@ -115,11 +109,10 @@ if($received_data->action == 'update')
 
  $query = "
  UPDATE meetingroom 
- SET NameRoom = :NameRoom,
- Start_day = :Start_day,
- Start_time = :Start_time,
- End_day = :End_day,
- End_time = :End_time,
+ SET NameRoom_ID = :NameRoom_ID,
+ Sday = :Start_day,
+ Stime = :Start_time,
+ Etime = :End_time,
  Description = :Description
  WHERE MeetingRoom_ID = :MeetingRoom_ID
  ";
@@ -151,4 +144,35 @@ if($received_data->action == 'delete')
  );
 
  echo json_encode($output);
+}
+if ($received_data->action == 'fetchCheckcal') {
+  $query = "
+ SELECT count(*) FROM `meetingroom` WHERE (
+	'" . $received_data->Start_time . "' BETWEEN Stime AND Etime
+    OR '" . $received_data->End_time . "' BETWEEN Stime AND Etime
+    OR Stime BETWEEN '" . $received_data->Start_time . "' AND '" . $received_data->End_time . "'
+) AND NameRoom_ID = '" . $received_data->NameRoom_ID . "' AND Sday = '" . $received_data->Start_day . "'
+ ";
+  $statement = $connect->prepare($query);
+
+  $statement->execute();
+
+  $result = $statement->fetchAll();
+
+  foreach ($result as $row) {
+    $data['numrock'] = $row['count(*)'];
+  }
+  echo json_encode($data);
+}
+if ($received_data->action == 'fetchcalendar') {
+  $query = "
+SELECT NameRoom AS name,CONCAT(Sday,' ',Stime) AS start,CONCAT(Sday,' ',Etime) AS end FROM nameroom,meetingroom WHERE meetingroom.NameRoom_ID = nameroom.NameRoom_ID and meetingroom.NameRoom_ID = '".$received_data->NameRoom_ID."'
+ ";
+  //   ORDER BY User_id DESC
+  $statement = $connect->prepare($query);
+  $statement->execute();
+  while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
+    $data[] = $row;
+  }
+  echo json_encode($data);
 }

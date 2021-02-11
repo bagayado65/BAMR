@@ -89,7 +89,7 @@
                                 </v-row>
                                 <v-row>
                                     <v-col>
-                                        <v-text-field @input="cancelPuts()" v-model="password" label="Password" name="password" />
+                                        <v-text-field @input="cancelPuts()" v-model="password" label="Password" name="password" type="password" />
                                     </v-col>
                                 </v-row>
                                 <v-row>
@@ -118,6 +118,14 @@
     <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
     <script>
+        var tom = new Date();
+        var today = new Date();
+        //(พศ,เดือน+1,วัน,ชม = PM,นาที,วินาที) 1612921864749 1612921560504
+        console.log('tom = ', tom);
+        console.log('today = ', today);
+        var g = today + (tom - today);
+        console.log('day = ', g);
+
         var app = new Vue({
             el: '#app',
             vuetify: new Vuetify(),
