@@ -176,7 +176,7 @@
                                                         </v-btn>
                                                     </v-col>
                                                     <v-col>
-                                                        <v-select v-model="type" :items="typesing" dense outlined hide-details class="ma-2" label="type"></v-select>
+                                                        <!-- <v-select v-model="type" :items="typesing" dense outlined hide-details class="ma-2" label="type"></v-select> -->
                                                     </v-col>
                                                 </v-row>
                                                 <v-calendar ref="calendar" :now="todays" :value="todays" :events="events" color="primary" :type="type"></v-calendar>
