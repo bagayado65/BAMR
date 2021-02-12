@@ -13,6 +13,40 @@ if ($received_data->action == 'fetchall') {
     }
     echo json_encode($data);
 }
+if ($received_data->action == 'fetchallonly') {
+    $query = "
+ SELECT * FROM user
+ ";
+    //   ORDER BY User_id DESC
+    $statement = $connect->prepare($query);
+    $statement->execute();
+    while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
+        $data[] = $row;
+    }
+    echo json_encode($data);
+}
+if ($received_data->action == 'fetchSingle') {
+    $query = "
+ SELECT User_id, Name, Username, Email, Phone, Status, Position FROM user WHERE User_id = '" . $received_data->User_id . "'";
+    //   ORDER BY User_id DESC
+    $statement = $connect->prepare($query);
+
+    $statement->execute();
+
+    $result = $statement->fetchAll();
+
+    foreach ($result as $row) {
+        $data['User_id'] = $row['User_id'];
+        $data['Name'] = $row['Name'];
+        $data['Username'] = $row['Username'];
+        $data['Email'] = $row['Email'];
+        $data['Phone'] = $row['Phone'];
+        $data['Status'] = $row['Status'];
+        $data['Position'] = $row['Position'];
+    }
+
+    echo json_encode($data);
+}
 // if ($received_data->action == 'insert') {
 //     $data = array(
 //         ':MeetingRoom_ID' => $received_data->MeetingRoom_ID,
@@ -94,6 +128,38 @@ if ($received_data->action == 'fetchall') {
 
 //     echo json_encode($data);
 // }
+if ($received_data->action == 'updateds') {
+    $data = array(
+        ':User_id' => $received_data->User_id,
+        ':Name' => $received_data->Name,
+        ':Username' => $received_data->Username,
+        ':Email' => $received_data->Email,
+        ':Phone' => $received_data->Phone,
+        ':Status' => $received_data->Status,
+        ':Position' => $received_data->Position
+    );
+
+    $query = "
+    UPDATE user 
+    SET Name = :Name,
+    Username = :Username,
+    Email = :Email,
+    Phone = :Phone,
+    Status = :Status,
+    Position = :Position
+    WHERE User_id = :User_id
+    ";
+
+    $statement = $connect->prepare($query);
+
+    $statement->execute($data);
+
+    $output = array(
+        'message' => 'Data Updated'
+    );
+
+    echo json_encode($output);
+}
 if ($received_data->action == 'update') {
     $data = array(
         ':Emails' => $received_data->emails,
@@ -119,19 +185,19 @@ if ($received_data->action == 'update') {
     echo json_encode($output);
 }
 
-// if ($received_data->action == 'delete') {
-//     $query = "
-//  DELETE FROM meetingroom 
-//  WHERE MeetingRoom_ID = '" . $received_data->MeetingRoom_ID . "'
-//  ";
+if ($received_data->action == 'delete') {
+    $query = "
+ DELETE FROM user 
+ WHERE User_id = '" . $received_data->User_id . "'
+ ";
 
-//     $statement = $connect->prepare($query);
+    $statement = $connect->prepare($query);
 
-//     $statement->execute();
+    $statement->execute();
 
-//     $output = array(
-//         'message' => 'Data Deleted'
-//     );
+    $output = array(
+        'message' => 'Data Deleted'
+    );
 
-//     echo json_encode($output);
-// }
+    echo json_encode($output);
+}

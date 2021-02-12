@@ -89,7 +89,7 @@
                                     <!-- <v-btn @click="testaxios()" color="success">
                                         insert
                                     </v-btn> -->
-                                    <v-btn color="success" @click="fetch_checktime()">text</v-btn>
+                                    <!-- <v-btn color="success" @click="fetch_checktime()">text</v-btn> -->
                                     <v-spacer></v-spacer>
                                     <input style="width: 300px;" type="text" id="myInput" onkeyup="SearchFuntion()" placeholder="ค้นหาชื่อห้องประชุม..." title="Type in a name">
                                     <v-divider vertical></v-divider>
@@ -156,7 +156,7 @@
                             <v-card>
                                 <!-- ,fetchAll_id_data() -->
                                 <v-btn @click="show_calendar = !show_calendar" width="100%">
-                                    <v-text>Calendar {{show_calendar}}</v-text>
+                                    <v-text>Calendar</v-text>
                                 </v-btn>
                                 <template v-if="show_calendar == true">
                                     <!-- <v-btn width="100%">

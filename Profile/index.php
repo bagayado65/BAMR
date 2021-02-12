@@ -15,17 +15,6 @@
 <body>
     <?php
     session_start();
-
-    // session_destroy();
-    // unset($_SESSION["IDOF"]);
-    // unset($_SESSION["PASSWORDOF"]);
-    // unset($_SESSION["IDUSERCAT"]);
-    // $_SESSION["USER_ID"] = $row['User_id'];
-    // $_SESSION["USERNAMES"] = $row['Username'];
-    // $_SESSION["PASSWORDS"] = $row['Passwords'];
-    // $_SESSION["NAME"] = $row['Name'];
-    // $_SESSION["EMAIL"] = $row['Email'];
-    // header("Location:index.php");
     ?>
     <div id="app">
         <v-app>
@@ -112,7 +101,8 @@
                 sw_msg1: false,
                 users: '',
                 emails: '',
-                phones: ''
+                phones: '',
+                session_preple: <?php echo "'" . $_SESSION["POSITION"] . "'" ?>
             },
             computed: {},
             watch: {},
@@ -157,7 +147,11 @@
                     });
                 },
                 local_Meeting: function() {
-                    location.href = "../Calendar/"
+                    if (this.session_preple == 0) {
+                        location.href = "../SuCalendar/"
+                    } else if (this.session_preple == 1) {
+                        location.href = "../Calendar/"
+                    }
                 },
                 local_logout: function() {
                     location.href = "../Login/log_out.php"

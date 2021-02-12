@@ -31,14 +31,17 @@
             $_SESSION["NAME"] = $row['Name'];
             $_SESSION["EMAIL"] = $row['Email'];
             $_SESSION["PHONE"] = $row['Phone'];
+            $_SESSION["POSITION"] = $row['Position'];
         } else {
             $m = "รหัสผ่าน/ชื่อผู้ใช้ ผิด!!";
         }
     }
     if (isset($_SESSION["USER_ID"])) {
-        // if ($_SESSION[""] == '1') {
+        if ($_SESSION["POSITION"] == 1) {
         header("Location:../Calendar");
-        // }
+        }else if($_SESSION["POSITION"] == 0){
+        header("Location:../SuCalendar");
+        }
     }
     ?>
     <div id="app">
@@ -118,13 +121,13 @@
     <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
     <script>
-        var tom = new Date();
-        var today = new Date();
-        //(พศ,เดือน+1,วัน,ชม = PM,นาที,วินาที) 1612921864749 1612921560504
-        console.log('tom = ', tom);
-        console.log('today = ', today);
-        var g = today + (tom - today);
-        console.log('day = ', g);
+        // var tom = new Date();
+        // var today = new Date();
+        // //(พศ,เดือน+1,วัน,ชม = PM,นาที,วินาที) 1612921864749 1612921560504
+        // console.log('tom = ', tom);
+        // console.log('today = ', today);
+        // var g = today + (tom - today);
+        // console.log('day = ', g);
 
         var app = new Vue({
             el: '#app',
