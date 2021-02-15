@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+
     <title>BAMR</title>
 </head>
 
@@ -32,15 +33,26 @@
             $_SESSION["EMAIL"] = $row['Email'];
             $_SESSION["PHONE"] = $row['Phone'];
             $_SESSION["POSITION"] = $row['Position'];
+            $_SESSION["STATUS"] = $row['Status'];
         } else {
             $m = "รหัสผ่าน/ชื่อผู้ใช้ ผิด!!";
         }
     }
     if (isset($_SESSION["USER_ID"])) {
         if ($_SESSION["POSITION"] == 1) {
-        header("Location:../Calendar");
-        }else if($_SESSION["POSITION"] == 0){
-        header("Location:../SuCalendar");
+            if ($_SESSION["STATUS"] == 0) {
+                session_destroy();
+                header("Location:../Login");
+            } else {
+                header("Location:../Calendar");
+            }
+        } else if ($_SESSION["POSITION"] == 0) {
+            if ($_SESSION["STATUS"] == 0) {
+                session_destroy();
+                header("Location:../Login");
+            } else {
+                header("Location:../SuCalendar");
+            }
         }
     }
     ?>
@@ -56,7 +68,7 @@
                 <v-continer>
                     <v-row>
                         <v-col>
-                            <v-btn class="light-blue accent-4" @mouseover="sw_msg = true" @mouseleave="sw_msg = false" depressed>
+                            <v-btn class="light-blue accent-4" @click="vbtnDesh()" @mouseover="sw_msg = true" @mouseleave="sw_msg = false" depressed>
                                 <v-icon color="white">
                                     mdi-home
                                 </v-icon>
@@ -143,6 +155,9 @@
                 },
                 cancelPuts: function() {
                     this.check_u_p = ''
+                },
+                vbtnDesh: function() {
+                    location.href = "../DeshBord"
                 },
             }
         })

@@ -26,7 +26,7 @@
                 <v-continer>
                     <v-row>
                         <v-col>
-                            <v-btn class="light-blue accent-4" @mouseover="sw_msg = true" @mouseleave="sw_msg = false" depressed>
+                            <v-btn class="light-blue accent-4" @click="vbtnDesh()" @mouseover="sw_msg = true" @mouseleave="sw_msg = false" depressed>
                                 <v-icon color="white">
                                     mdi-home
                                 </v-icon>
@@ -317,7 +317,7 @@
                         this.password = null
                         this.confirmpassword = null
                         this.e6 -= 1
-                    } else if (this.e6 == 3){
+                    } else if (this.e6 == 3) {
                         this.codesix = null
                     }
                 },
@@ -326,8 +326,12 @@
                     var g = this.emails
                     return emailReg.test(g)
                 },
+                vbtnDesh: function() {
+                    location.href = "../DeshBord"
+                },
             }
         })
     </script>
 </body>
+
 </html>
