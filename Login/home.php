@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
-
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.6.0/dist/sweetalert2.all.min.js"></script>
     <title>BAMR</title>
 </head>
 
@@ -42,14 +42,32 @@
         if ($_SESSION["POSITION"] == 1) {
             if ($_SESSION["STATUS"] == 0) {
                 session_destroy();
-                header("Location:../Login");
+                echo '<script>';
+                echo "Swal.fire({
+            title: 'ขออภัย!!',
+            text: 'ไอดีท่าน โดนระงับการใช้งาน',
+            icon: 'error',
+            confirmButtonText: 'Back'
+          }).then(function() {
+            window.location = '../Login';
+        });";
+                echo '</script>';
             } else {
                 header("Location:../Calendar");
             }
         } else if ($_SESSION["POSITION"] == 0) {
             if ($_SESSION["STATUS"] == 0) {
                 session_destroy();
-                header("Location:../Login");
+                echo '<script>';
+                echo "Swal.fire({
+            title: 'ขออภัย!!',
+            text: 'ไอดีท่าน โดนระงับการใช้งาน',
+            icon: 'error',
+            confirmButtonText: 'Back'
+          }).then(function() {
+            window.location = '../Login';
+        });";
+                echo '</script>';
             } else {
                 header("Location:../SuCalendar");
             }

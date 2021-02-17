@@ -512,6 +512,8 @@
                     }).then(function(response) {
                         app.nameroom = response.data;
                         console.log(app.nameroom)
+                        app.selectCalendar = response.data[0];
+                        app.show_main()
                     });
                 },
                 fetchAllData: function() {
@@ -545,6 +547,13 @@
                         console.log(app.dataCld_edit);
                     });
                     console.log(this.dataCld_edit)
+                },
+                show_main: function() {
+                    axios.post('../Database/db_Calendar.php', {
+                        action: 'fetchcalendar_all',
+                    }).then(function(response) {
+                        app.events = response.data;
+                    })
                 },
                 edit_data: function(id) {
                     this.dataCld_edit.MeetingRoom_ID = id

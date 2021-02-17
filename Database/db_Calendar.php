@@ -178,7 +178,7 @@ SELECT CONCAT('ห้อง :',NameRoom,' ติดต่อ :',Phone,' ',Email,
 }
 if ($received_data->action == 'fetchcalendar_all') {
   $query = "
-SELECT CONCAT('ห้อง :',NameRoom,' ติดต่อ :',Phone,' ',Email,' คำอธิบาย :',Description) AS name,CONCAT(Sday,' ',Stime) AS start,CONCAT(Sday,' ',Etime) AS end FROM nameroom,meetingroom,user WHERE meetingroom.NameRoom_ID = nameroom.NameRoom_ID and meetingroom.User_id = user.User_id
+SELECT CONCAT('ห้อง : ',NameRoom,' ติดต่อ :',Phone,' ',Email,' คำอธิบาย :',Description) AS name,CONCAT(Sday,' ',Stime) AS start,CONCAT(Sday,' ',Etime) AS end FROM nameroom,meetingroom,user WHERE meetingroom.NameRoom_ID = nameroom.NameRoom_ID and meetingroom.User_id = user.User_id
  ";
   //   ORDER BY User_id DESC
   $statement = $connect->prepare($query);

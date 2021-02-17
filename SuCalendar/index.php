@@ -747,13 +747,34 @@
                     this.editcard_usersa = false
                 },
                 fetch_calendar: function() {
+                    if (this.selectCalendar == 1) {
+                        axios.post('../Database/db_Calendar.php', {
+                            action: 'fetchcalendar_all',
+                        }).then(function(response) {
+                            app.events = response.data;
+                        })
+                    } else {
+                        axios.post('../Database/db_Calendar.php', {
+                            action: 'fetchcalendar',
+                            NameRoom_ID: this.selectCalendar
+                        }).then(function(response) {
+                            app.events = response.data;
+                        })
+                    }
+                    // axios.post('../Database/db_SuCalendar.php', {
+                    //     action: 'fetchcalendar',
+                    //     NameRoom_ID: this.selectCalendar
+                    // }).then(function(response) {
+                    //     app.events = response.data;
+                    //     console.log(app.events);
+                    // });
+                },
+                show_main: function() {
                     axios.post('../Database/db_SuCalendar.php', {
-                        action: 'fetchcalendar',
-                        NameRoom_ID: this.selectCalendar
+                        action: 'fetchcalendar_all',
                     }).then(function(response) {
                         app.events = response.data;
-                        console.log(app.events);
-                    });
+                    })
                 },
                 fetch_checktime: function() {
                     axios.post('../Database/db_SuCalendar.php', {
@@ -785,6 +806,8 @@
                     }).then(function(response) {
                         app.nameroom = response.data;
                         console.log(app.nameroom)
+                        app.selectCalendar = response.data[0];
+                        app.show_main()
                     });
                 },
                 fetchAllData: function() {
@@ -792,7 +815,7 @@
                         action: 'fetchall',
                     }).then(function(response) {
                         app.dataCld_fetchall = response.data;
-                        console.log(app.dataCld_fetchall);
+                        // console.log(app.dataCld_fetchall);
                     });
                 },
                 fetchAll_id_data: function() {
