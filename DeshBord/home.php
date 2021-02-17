@@ -173,6 +173,13 @@
                         location.href = "../Register"
                     }
                 },
+                show_main: function() {
+                    axios.post('../Database/db_Calendar.php', {
+                        action: 'fetchcalendar_all',
+                    }).then(function(response) {
+                        app.events = response.data;
+                    })
+                },
                 fetch_calendar: function() {
                     if (this.selectCalendar == 1) {
                         axios.post('../Database/db_Calendar.php', {
@@ -194,6 +201,8 @@
                         action: 'fetchall',
                     }).then(function(response) {
                         app.nameroom = response.data;
+                        app.selectCalendar = response.data[0];
+                        app.show_main()
                     });
                 },
                 prv_mount: function() {
