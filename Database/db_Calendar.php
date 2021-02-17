@@ -166,7 +166,19 @@ if ($received_data->action == 'fetchCheckcal') {
 }
 if ($received_data->action == 'fetchcalendar') {
   $query = "
-SELECT NameRoom AS name,CONCAT(Sday,' ',Stime) AS start,CONCAT(Sday,' ',Etime) AS end FROM nameroom,meetingroom WHERE meetingroom.NameRoom_ID = nameroom.NameRoom_ID and meetingroom.NameRoom_ID = '".$received_data->NameRoom_ID."'
+SELECT CONCAT('ห้อง :',NameRoom,' ติดต่อ :',Phone,' ',Email,' คำอธิบาย :',Description) AS name,CONCAT(Sday,' ',Stime) AS start,CONCAT(Sday,' ',Etime) AS end FROM nameroom,meetingroom,user WHERE meetingroom.NameRoom_ID = nameroom.NameRoom_ID and meetingroom.User_id = user.User_id and meetingroom.NameRoom_ID = '".$received_data->NameRoom_ID."'
+ ";
+  //   ORDER BY User_id DESC
+  $statement = $connect->prepare($query);
+  $statement->execute();
+  while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
+    $data[] = $row;
+  }
+  echo json_encode($data);
+}
+if ($received_data->action == 'fetchcalendar_all') {
+  $query = "
+SELECT CONCAT('ห้อง :',NameRoom,' ติดต่อ :',Phone,' ',Email,' คำอธิบาย :',Description) AS name,CONCAT(Sday,' ',Stime) AS start,CONCAT(Sday,' ',Etime) AS end FROM nameroom,meetingroom,user WHERE meetingroom.NameRoom_ID = nameroom.NameRoom_ID and meetingroom.User_id = user.User_id
  ";
   //   ORDER BY User_id DESC
   $statement = $connect->prepare($query);

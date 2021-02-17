@@ -91,7 +91,7 @@
                     Login BAMR
                 </v-card-title>
                 <v-card-subtitle class="font-weight-thin white--text">
-                    Of user
+                    ^w^
                 </v-card-subtitle>
                 <v-card class="elevation-0">
                     <v-card-text>

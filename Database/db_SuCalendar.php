@@ -94,7 +94,10 @@ if ($received_data->action == 'update') {
     $data = array(
         ':NameRoom_ID' => $received_data->NameRoom_ID,
         ':Start_day' => $received_data->Start_day,
-
+        ':Start_time' => $received_data->Start_time,
+        ':End_time' => $received_data->End_time,
+        ':Description' => $received_data->Description,
+        ':MeetingRoom_ID' => $received_data->MeetingRoom_ID
     );
 
     $query = "

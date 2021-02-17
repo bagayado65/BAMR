@@ -357,7 +357,7 @@
                                                                 <input @change="fetch_checktime()" v-model="dataCld_insert.Start_day" type="date" id="meeting-time" name="meeting-time" :min="dayeatone" />
                                                             </div>
                                                             <div>
-                                                                <input @change="fetch_checktime()" v-model="dataCld_insert.Start_time" type="time" id="meeting-time" name="meeting-time" /> <span class="ml-2 mr-5"> ถึงเวลา </span> <input v-model="dataCld_insert.End_time" type="time" id="meeting-time" name="meeting-time" />
+                                                                <input @change="fetch_checktime()" v-model="dataCld_insert.Start_time" type="time" id="meeting-time" name="meeting-time" /> <span class="ml-2 mr-5"> ถึงเวลา </span> <input @change="fetch_checktime()" v-model="dataCld_insert.End_time" type="time" id="meeting-time" name="meeting-time" />
                                                             </div>
                                                         </v-col>
                                                     </v-row>
@@ -392,9 +392,9 @@
                     </v-row>
                     <v-row>
                         <v-col>
-                            <v-card>
+                            <v-card max-height="800">
                                 <!-- ,fetchAll_id_data() -->
-                                <v-btn @click="show_calendar = !show_calendar" width="100%">
+                                <v-btn @click="show_calendar = !show_calendar,classmts()" width="100%">
                                     <v-text>Calendar</v-text>
                                 </v-btn>
                                 <template v-if="show_calendar == true">
@@ -413,12 +413,38 @@
                                                         <v-btn icon @click="next_mount()">
                                                             <v-icon>mdi-chevron-right</v-icon>
                                                         </v-btn>
+                                                        <v-menu bottom right>
+                                                            <template v-slot:activator="{ on, attrs }">
+                                                                <v-btn outlined color="grey darken-2" v-bind="attrs" v-on="on">
+                                                                    <span>{{ typeToLabel[type] }}</span>
+                                                                    <v-icon right>
+                                                                        mdi-menu-down
+                                                                    </v-icon>
+                                                                </v-btn>
+                                                            </template>
+                                                            <v-list>
+                                                                <v-list-item @click="type = 'day'">
+                                                                    <v-list-item-title>Day</v-list-item-title>
+                                                                </v-list-item>
+                                                                <v-list-item @click="type = 'week'">
+                                                                    <v-list-item-title>Week</v-list-item-title>
+                                                                </v-list-item>
+                                                                <v-list-item @click="type = 'month'">
+                                                                    <v-list-item-title>Month</v-list-item-title>
+                                                                </v-list-item>
+                                                                <v-list-item @click="type = '4day'">
+                                                                    <v-list-item-title>4 days</v-list-item-title>
+                                                                </v-list-item>
+                                                            </v-list>
+                                                        </v-menu>
                                                     </v-col>
                                                     <v-col>
-                                                        <!-- <v-select v-model="type" :items="typesing" dense outlined hide-details class="ma-2" label="type"></v-select> -->
                                                     </v-col>
                                                 </v-row>
-                                                <v-calendar ref="calendar" :now="todays" :value="todays" :events="events" color="primary" :type="type"></v-calendar>
+                                                <v-toolbar-title v-if="$refs.calendar">
+                                                    {{ $refs.calendar.title }}
+                                                </v-toolbar-title>
+                                                <v-calendar ref="calendar" @click:more="viewDay" @click:date="viewDay" :now="todays" :value="todays" :events="events" color="primary" :type="type"></v-calendar>
                                             </v-sheet>
                                         </v-col>
                                     </v-row>
@@ -429,7 +455,7 @@
                     <v-row>
                         <v-col>
                             <div>
-                                <v-card>
+                                <v-card :class="classmt">
                                     <template>
                                         <v-simple-table id="myTable" fixed-header height="550px">
                                             <template v-slot:default>
@@ -500,7 +526,7 @@
                                                             <input @change="fetch_checktime1()" v-model="dataCld_edit.Start_day" type="date" id="meeting-time" name="meeting-time" :min="dayeatone" />
                                                         </div>
                                                         <div>
-                                                            <input @change="fetch_checktime1()" v-model="dataCld_edit.Start_time" type="time" id="meeting-time" name="meeting-time" /> <span class="ml-2 mr-5"> ถึงเวลา </span> <input v-model="dataCld_edit.End_time" type="time" id="meeting-time" name="meeting-time" />
+                                                            <input @change="fetch_checktime1()" v-model="dataCld_edit.Start_time" type="time" id="meeting-time" name="meeting-time" /> <span class="ml-2 mr-5"> ถึงเวลา </span> <input @change="fetch_checktime1()" v-model="dataCld_edit.End_time" type="time" id="meeting-time" name="meeting-time" />
                                                         </div>
                                                     </v-col>
                                                 </v-row>
@@ -657,7 +683,13 @@
                 counttime: '0',
                 todays: new Date(),
                 type: 'month',
-                typesing: ['month', 'week', 'day', '4day'],
+                typeToLabel: {
+                    month: 'Month',
+                    week: 'Week',
+                    day: 'Day',
+                    '4day': '4 Days',
+                },
+                classmt: 'mt-0',
                 events: '',
                 range: {
                     start: '',
@@ -676,6 +708,12 @@
             methods: {
                 test_date: function() {
                     console.log(this.dataCld_insert.User_ID)
+                },
+                viewDay({
+                    date
+                }) {
+                    // this.focus = date
+                    this.type = 'day'
                 },
                 CheckTab_s: function(link) {
                     // alert(link)
@@ -917,7 +955,7 @@
                     }
                 },
                 edit_axios: function() {
-                    // console.log(this.dataCld_edit)
+                    console.log(app.dataCld_edit.NameRoom_ID)
                     if (this.dataCld_edit.NameRoom !== null) {
                         if (this.dataCld_edit.Start_day != '' && this.dataCld_edit.Start_time != '' && this.dataCld_edit.End_time != '') {
                             if (this.counttime == '0') {
@@ -1167,12 +1205,37 @@
                     if (this.type == 'month') {
                         this.todays = new Date(this.todays.setMonth(this.todays.getMonth() - 1))
                     }
+                    if (this.type == 'week') {
+                        this.todays = new Date(this.todays.setDate(this.todays.getDate() - 7))
+                    }
+                    if (this.type == 'day') {
+                        this.todays = new Date(this.todays.setDate(this.todays.getDate() - 1))
+                    }
+                    if (this.type == '4day') {
+                        this.todays = new Date(this.todays.setDate(this.todays.getDate() - 4))
+                    }
                 },
                 next_mount: function() {
                     if (this.type == 'month') {
                         this.todays = new Date(this.todays.setMonth(this.todays.getMonth() + 1))
                     }
-                }
+                    if (this.type == 'week') {
+                        this.todays = new Date(this.todays.setDate(this.todays.getDate() + 7))
+                    }
+                    if (this.type == 'day') {
+                        this.todays = new Date(this.todays.setDate(this.todays.getDate() + 1))
+                    }
+                    if (this.type == '4day') {
+                        this.todays = new Date(this.todays.setDate(this.todays.getDate() + 4))
+                    }
+                },
+                classmts: function() {
+                    if (this.show_calendar == true) {
+                        this.classmt = 'mt-16'
+                    } else {
+                        this.classmt = 'mt-0'
+                    }
+                },
             }
         })
     </script>

@@ -54,10 +54,10 @@
                                 <v-select class="mt-4 ml-2 mr-2" @change="fetch_calendar()" v-model="selectCalendar" :items="nameroom" item-text="NameRoom" item-value="NameRoom_ID" label="ชื่อห้องประชุม" dense></v-select>
                                 <v-row>
                                     <v-col>
-                                        <v-sheet height="550">
+                                        <v-sheet height="600">
                                             <v-row>
                                                 <v-col>
-                                                    <v-btn icon @click="prv_mount()">
+                                                    <v-btn icon @click="$refs.calendar.prev()">
                                                         <v-icon>mdi-chevron-left</v-icon>
                                                     </v-btn>
                                                     <v-btn icon @click="next_mount()">
@@ -89,10 +89,7 @@
                                                     </v-menu>
                                                 </v-col>
                                             </v-row>
-                                            <v-toolbar-title v-if="$refs.calendar">
-                                                {{ $refs.calendar.title }}
-                                            </v-toolbar-title>
-                                            <v-calendar ref="calendar" @click:more="viewDay" @click:date="viewDay" :now="todays" :value="todays" :events="events" color="primary" :type="type"></v-calendar>
+                                            <v-calendar ref="calendar" v-model="focus" @click:more="viewDay" @click:date="viewDay" :now="todays" :value="todays" :events="events" color="primary" :type="type"></v-calendar>
                                         </v-sheet>
                                     </v-col>
                                 </v-row>
@@ -163,7 +160,7 @@
                 viewDay({
                     date
                 }) {
-                    // this.focus = date
+                    this.focus = date
                     this.type = 'day'
                 },
                 vbtnDesh: function(xiv) {
@@ -174,20 +171,12 @@
                     }
                 },
                 fetch_calendar: function() {
-                    if (this.selectCalendar == 1) {
-                        axios.post('../Database/db_Calendar.php', {
-                            action: 'fetchcalendar_all',
-                        }).then(function(response) {
-                            app.events = response.data;
-                        })
-                    } else {
-                        axios.post('../Database/db_Calendar.php', {
-                            action: 'fetchcalendar',
-                            NameRoom_ID: this.selectCalendar
-                        }).then(function(response) {
-                            app.events = response.data;
-                        })
-                    }
+                    axios.post('../Database/db_Calendar.php', {
+                        action: 'fetchcalendar',
+                        NameRoom_ID: this.selectCalendar
+                    }).then(function(response) {
+                        app.events = response.data;
+                    });
                 },
                 fetch_nameroom: function() {
                     axios.post('../Database/db_Nameroom.php', {
@@ -200,28 +189,10 @@
                     if (this.type == 'month') {
                         this.todays = new Date(this.todays.setMonth(this.todays.getMonth() - 1))
                     }
-                    if (this.type == 'week') {
-                        this.todays = new Date(this.todays.setDate(this.todays.getDate() - 7))
-                    }
-                    if (this.type == 'day') {
-                        this.todays = new Date(this.todays.setDate(this.todays.getDate() - 1))
-                    }
-                    if (this.type == '4day') {
-                        this.todays = new Date(this.todays.setDate(this.todays.getDate() - 4))
-                    }
                 },
                 next_mount: function() {
                     if (this.type == 'month') {
                         this.todays = new Date(this.todays.setMonth(this.todays.getMonth() + 1))
-                    }
-                    if (this.type == 'week') {
-                        this.todays = new Date(this.todays.setDate(this.todays.getDate() + 7))
-                    }
-                    if (this.type == 'day') {
-                        this.todays = new Date(this.todays.setDate(this.todays.getDate() + 1))
-                    }
-                    if (this.type == '4day') {
-                        this.todays = new Date(this.todays.setDate(this.todays.getDate() + 4))
                     }
                 },
             }
