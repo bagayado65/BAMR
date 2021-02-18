@@ -226,7 +226,7 @@
                             <div>
                                 <v-card :class="classmt">
                                     <template>
-                                        <v-simple-table id="myTable" fixed-header height="550px">
+                                        <v-simple-table id="myTable" fixed-header height="500px">
                                             <template v-slot:default>
                                                 <thead>
                                                     <tr>
@@ -336,6 +336,48 @@
                         </v-col>
                     </v-row>
                 </v-container>
+                <v-tooltip top>
+                    <template v-slot:activator="{ on, attrs }">
+                        <v-btn @click="showdatacall = !showdatacall,fetch_alls()" fab small dark bottom left class="primary ml-10" v-bind="attrs" v-on="on">
+                            <v-icon>mdi-chevron-up</v-icon>
+                        </v-btn>
+                    </template>
+                    <span>ดูห้องไม่ว่างในตอนนี้</span>
+                </v-tooltip>
+                <v-dialog v-model="showdatacall" persistent transition="dialog-bottom-transition" max-width="76%">
+                    <v-card>
+                        <!-- v-if="i != 0" -->
+                        <v-card-title>
+                            <v-text>
+                                ห้องไม่ว่าง {{ today_SA }}
+                            </v-text>
+                            <v-spacer></v-spacer>
+                            <v-btn @click="showdatacall = !showdatacall" color="red" icon>
+                                <v-icon>
+                                    mdi-close
+                                </v-icon>
+                            </v-btn>
+                        </v-card-title>
+                        <v-list>
+                            <v-list-item-group>
+                                <v-list-item v-for="(itemes,i) in sentarall" :key="i">
+                                    <v-list-item-content>
+                                        <v-list-item-title>
+                                            <v-badge color="red" dot>
+                                                <v-text>
+                                                    ห้องประชุม : {{ itemes.NameRoom }}
+                                                    <v-text class="red--text">
+                                                        ไม่ว่างในตอนนี้
+                                                    </v-text>
+                                                </v-text>
+                                            </v-badge>
+                                        </v-list-item-title>
+                                    </v-list-item-content>
+                                </v-list-item>
+                            </v-list-item-group>
+                        </v-list>
+                    </v-card>
+                </v-dialog>
             </v-main>
         </v-app>
     </div>
@@ -429,6 +471,7 @@
                 show_calendar: false,
                 counttime: '0',
                 todays: new Date(),
+                today: today.toLocaleString(),
                 type: 'month',
                 typeToLabel: {
                     month: 'Month',
@@ -444,6 +487,8 @@
                 },
                 numberelo: null,
                 colors_room: '',
+                showdatacall: false,
+                sentarall: '',
             },
             computed: {},
             watch: {},
@@ -451,6 +496,7 @@
                 this.fetch_nameroom()
                 this.fetchAll_id_data()
                 this.fetchAllData()
+                this.fetch_alls()
             },
             methods: {
                 test_date: function() {
@@ -500,6 +546,13 @@
                     //     app.events = response.data;
                     //     console.log(app.events);
                     // });
+                },
+                fetch_alls: function() {
+                    axios.post('../Database/db_Calendar.php', {
+                        action: 'autoChess',
+                    }).then(function(response) {
+                        app.sentarall = response.data;
+                    });
                 },
                 fetch_checktime: function() {
                     axios.post('../Database/db_Calendar.php', {

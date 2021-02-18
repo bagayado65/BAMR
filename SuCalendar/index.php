@@ -474,7 +474,7 @@
                             <div>
                                 <v-card :class="classmt">
                                     <template>
-                                        <v-simple-table id="myTable" fixed-header height="550px">
+                                        <v-simple-table id="myTable" fixed-header height="500px">
                                             <template v-slot:default>
                                                 <thead>
                                                     <tr>

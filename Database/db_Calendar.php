@@ -1,7 +1,10 @@
 <?php
+date_default_timezone_set("Asia/Bangkok");
 $connect = new PDO("mysql:host=localhost;dbname=bamr", "root", "");
 $received_data = json_decode(file_get_contents("php://input"));
 $data = array();
+$date_now = date("Y-m-d");
+$time_now = date("H:i:s");
 if($received_data->action == 'fetchall')
 {
  $query = "
@@ -18,7 +21,7 @@ if($received_data->action == 'fetchall')
 }
 if ($received_data->action == 'fetchalls_data') {
   $query = "
- SELECT MeetingRoom_ID, NameRoom, Sday, Stime, Etime, Description FROM nameroom,meetingroom  WHERE meetingroom.NameRoom_ID = nameroom.NameRoom_ID ORDER BY MeetingRoom_ID ASC
+ SELECT MeetingRoom_ID, NameRoom, Sday, Stime, Etime, Description, Colors FROM nameroom,meetingroom  WHERE meetingroom.NameRoom_ID = nameroom.NameRoom_ID ORDER BY MeetingRoom_ID ASC
  ";
   //   ORDER BY User_id DESC
   $statement = $connect->prepare($query);
@@ -184,6 +187,20 @@ SELECT CONCAT('ห้องประชุม : ',NameRoom,' ติดต่อ 
 if ($received_data->action == 'fetchcalendar_all') {
   $query = "
 SELECT CONCAT('ห้องประชุม : ',NameRoom,' ติดต่อ :',Phone,' ',Email,' คำอธิบาย :',Description) AS name,CONCAT(Sday,' ',Stime) AS start,CONCAT(Sday,' ',Etime) AS end,Colors AS color FROM nameroom,meetingroom,user WHERE meetingroom.NameRoom_ID = nameroom.NameRoom_ID and meetingroom.User_id = user.User_id
+ ";
+  //   ORDER BY User_id DESC
+  $statement = $connect->prepare($query);
+  $statement->execute();
+  while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
+    $data[] = $row;
+  }
+  echo json_encode($data);
+}
+if ($received_data->action == 'autoChess') {
+  $query = "
+SELECT DISTINCT nameroom.NameRoom FROM `meetingroom`,`nameroom` WHERE (
+	'$time_now' BETWEEN Stime AND Etime
+) AND meetingroom.NameRoom_ID = nameroom.NameRoom_ID AND Sday = '$date_now'
  ";
   //   ORDER BY User_id DESC
   $statement = $connect->prepare($query);

@@ -100,11 +100,50 @@
                         </v-col>
                     </v-row>
                 </v-container>
-                <!-- <v-fab-transition>
-                    <v-btn @click="numicon(1)" :key="actives.icon" :color="actives.color" fab small dark bottom left class="v-btn--example ml-5">
-                        <v-icon>{{ actives.icon }}</v-icon>
-                    </v-btn>
-                </v-fab-transition> -->
+                <!-- <v-fab-transition> -->
+                <v-tooltip top>
+                    <template v-slot:activator="{ on, attrs }">
+                        <v-btn @click="showdatacall = !showdatacall,fetch_alls()" fab small dark bottom left class="primary ml-10" v-bind="attrs" v-on="on">
+                            <v-icon>mdi-chevron-up</v-icon>
+                        </v-btn>
+                    </template>
+                    <span>ดูห้องไม่ว่างในตอนนี้</span>
+                </v-tooltip>
+                <!-- </v-fab-transition> -->
+                <v-dialog v-model="showdatacall" persistent transition="dialog-bottom-transition" max-width="76%">
+                    <v-card>
+                        <!-- v-if="i != 0" -->
+                        <v-card-title>
+                            <v-text>
+                                ห้องไม่ว่าง {{ today_SA }}
+                            </v-text>
+                            <v-spacer></v-spacer>
+                            <v-btn @click="showdatacall = !showdatacall" color="red" icon>
+                                <v-icon>
+                                    mdi-close
+                                </v-icon>
+                            </v-btn>
+                        </v-card-title>
+                        <v-list>
+                            <v-list-item-group>
+                                <v-list-item v-for="(itemes,i) in sentarall" :key="i">
+                                    <v-list-item-content>
+                                        <v-list-item-title>
+                                            <v-badge color="red" dot>
+                                                <v-text>
+                                                    ห้องประชุม : {{ itemes.NameRoom }}
+                                                    <v-text class="red--text">
+                                                        ไม่ว่างในตอนนี้
+                                                    </v-text>
+                                                </v-text>
+                                            </v-badge>
+                                        </v-list-item-title>
+                                    </v-list-item-content>
+                                </v-list-item>
+                            </v-list-item-group>
+                        </v-list>
+                    </v-card>
+                </v-dialog>
             </v-main>
         </v-app>
     </div>
@@ -114,6 +153,7 @@
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
     <script>
+        let datest = new Date();
         var app = new Vue({
             el: '#app',
             vuetify: new Vuetify(),
@@ -121,6 +161,7 @@
                 sw_msg: false,
                 sw_msg1: false,
                 todays: new Date(),
+                today_SA: datest.toLocaleString(),
                 type: 'month',
                 typeToLabel: {
                     month: 'Month',
@@ -131,35 +172,17 @@
                 events: '',
                 nameroom: '',
                 selectCalendar: '',
-                numicons: 1,
+                // numicons: 1,
+                showdatacall: false,
+                sentarall: '',
             },
-            computed: {
-                // actives() {
-                //     switch (this.numicons) {
-                //         case 1:
-                //             return {
-                //                 color: 'primary', icon: 'mdi-chevron-up'
-                //             }
-                //             case 2:
-                //                 return {
-                //                     color: 'primary', icon: 'mdi-chevron-down'
-                //                 }
-                //                 default:
-                //                     return {}
-                //     }
-                // }
-            },
+            computed: {},
             watch: {},
             created() {
                 this.fetch_nameroom()
+                this.fetch_alls()
             },
             methods: {
-                // numicon: function(num) {
-                //     this.numicons += num
-                //     if (this.numicons > 2) {
-                //         this.numicons = 1
-                //     }
-                // },
                 viewDay({
                     date
                 }) {
@@ -195,6 +218,13 @@
                             app.events = response.data;
                         })
                     }
+                },
+                fetch_alls: function() {
+                    axios.post('../Database/db_Calendar.php', {
+                        action: 'autoChess',
+                    }).then(function(response) {
+                        app.sentarall = response.data;
+                    });
                 },
                 fetch_nameroom: function() {
                     axios.post('../Database/db_Nameroom.php', {
