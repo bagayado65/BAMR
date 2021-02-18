@@ -4,7 +4,7 @@ $received_data = json_decode(file_get_contents("php://input"));
 $data = array();
 if ($received_data->action == 'fetchall') {
     $query = "
- SELECT NameRoom_ID, NameRoom FROM nameroom ORDER BY NameRoom_ID ASC
+ SELECT NameRoom_ID, NameRoom, Disableval FROM nameroom ORDER BY NameRoom_ID ASC
  ";
     //   ORDER BY User_id DESC
     $statement = $connect->prepare($query);
@@ -16,7 +16,7 @@ if ($received_data->action == 'fetchall') {
 }
 if ($received_data->action == 'fetchSingle') {
     $query = "
- SELECT NameRoom_ID, NameRoom FROM nameroom  WHERE NameRoom_ID = '" . $received_data->NameRoom_ID . "'
+ SELECT NameRoom_ID, NameRoom, Disableval FROM nameroom  WHERE NameRoom_ID = '" . $received_data->NameRoom_ID . "'
  ";
 
     $statement = $connect->prepare($query);
@@ -40,9 +40,10 @@ if ($received_data->action == 'insert') {
     $query = "
  INSERT INTO NameRoom 
  (
- NameRoom) 
+ NameRoom,Disableval) 
  VALUES (
- :NameRoom)
+ :NameRoom,
+ '')
  ";
 
     $statement = $connect->prepare($query);

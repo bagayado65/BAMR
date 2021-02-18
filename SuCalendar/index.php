@@ -95,11 +95,21 @@
                                                     <tr v-for="item in nameroom" :key="item.NameRoom_ID">
                                                         <td class="text-center">{{ item.NameRoom_ID }}</td>
                                                         <td class="text-center">{{ item.NameRoom }}</td>
-                                                        <td class="text-center">
+                                                        <td class="text-center" v-if="item.NameRoom_ID != 1">
                                                             <v-btn @click="edit_data_name(item.NameRoom_ID)" color="orange" icon>
                                                                 <v-icon class="mt-2">mdi-border-color</v-icon>
                                                             </v-btn>
                                                             <v-btn @click="delete_data_name(item.NameRoom_ID)" color="red" icon>
+                                                                <v-icon>
+                                                                    mdi-delete
+                                                                </v-icon>
+                                                            </v-btn>
+                                                        </td>
+                                                        <td class="text-center" v-else>
+                                                            <v-btn color="orange" icon disabled>
+                                                                <v-icon class="mt-2">mdi-border-color</v-icon>
+                                                            </v-btn>
+                                                            <v-btn color="red" icon disabled>
                                                                 <v-icon>
                                                                     mdi-delete
                                                                 </v-icon>
@@ -351,8 +361,15 @@
                                                     <v-divider></v-divider>
                                                     <v-row>
                                                         <v-col class="ml-6 mt-4">
-                                                            <v-select v-model="dataCld_insert.NameRoom" :items="nameroom" item-text="NameRoom" item-value="NameRoom_ID" label="ชื่อห้องประชุม" dense></v-select>
+                                                            <v-select v-model="dataCld_insert.NameRoom" :items="nameroom" item-text="NameRoom" item-value="NameRoom_ID" item-disabled="Disableval" label="ชื่อห้องประชุม" dense></v-select>
                                                             <v-spacer></v-spacer>
+                                                            <v-text>สีห้อง {{ colors_room }}</v-text>
+                                                            <v-color-picker v-model="colors_room" mode="hex" hide-inputs hide-canvas></v-color-picker>
+                                                        </v-col>
+                                                    </v-row>
+                                                    <v-divider></v-divider>
+                                                    <v-row>
+                                                        <v-col class="ml-6 mt-4">
                                                             <div>
                                                                 <input @change="fetch_checktime()" v-model="dataCld_insert.Start_day" type="date" id="meeting-time" name="meeting-time" :min="dayeatone" />
                                                             </div>
@@ -482,7 +499,11 @@
                                                 </thead>
                                                 <tbody>
                                                     <tr v-for="item in dataCld_fetchall" :key="item.NameRoom">
-                                                        <td>{{ item.NameRoom }}</td>
+                                                        <td>
+                                                            <v-badge :color="item.Colors" dot>
+                                                                {{ item.NameRoom }}
+                                                            </v-badge>
+                                                        </td>
                                                         <td>{{ item.Name }}</td>
                                                         <td>{{ item.Sday }}</td>
                                                         <td>{{ item.Stime }} - {{ item.Etime }}</td>
@@ -519,9 +540,16 @@
                                                 <v-divider></v-divider>
                                                 <v-row>
                                                     <v-col class="ml-6 mt-4">
-                                                        <v-select v-model="dataCld_edit.NameRoom_ID" :items="nameroom" item-text="NameRoom" item-value="NameRoom_ID" label="ชื่อห้องประชุม" dense></v-select>
+                                                        <v-select v-model="dataCld_edit.NameRoom_ID" :items="nameroom" item-text="NameRoom" item-value="NameRoom_ID" item-disabled="Disableval" label="ชื่อห้องประชุม" dense></v-select>
                                                         {{ dataCld_edit.NameRoom }}
                                                         <v-spacer></v-spacer>
+                                                        <v-text>สีห้อง {{ colors_room }}</v-text>
+                                                        <v-color-picker v-model="colors_room" mode="hex" hide-inputs hide-canvas></v-color-picker>
+                                                    </v-col>
+                                                </v-row>
+                                                <v-divider></v-divider>
+                                                <v-row>
+                                                    <v-col class="ml-6 mt-4">
                                                         <div>
                                                             <input @change="fetch_checktime1()" v-model="dataCld_edit.Start_day" type="date" id="meeting-time" name="meeting-time" :min="dayeatone" />
                                                         </div>
@@ -696,6 +724,7 @@
                     end: ''
                 },
                 numberelo: null,
+                colors_room: '',
             },
             computed: {},
             watch: {},
@@ -989,10 +1018,12 @@
                                     Start_time: app.dataCld_edit.Start_time,
                                     End_time: app.dataCld_edit.End_time,
                                     Description: app.dataCld_edit.Description,
-                                    MeetingRoom_ID: app.dataCld_edit.MeetingRoom_ID
+                                    MeetingRoom_ID: app.dataCld_edit.MeetingRoom_ID,
+                                    Colors: app.colors_room,
                                 }).then(function(response) {
                                     app.fetchAllData();
                                     app.cencalmeetcard();
+                                    app.show_main();
                                     app.dataCld_edit.NameRoom_ID = null;
                                     app.dataCld_edit.Start_day = '';
                                     app.dataCld_edit.Start_time = '';
@@ -1093,9 +1124,11 @@
                                     Start_time: this.dataCld_insert.Start_time,
                                     End_time: this.dataCld_insert.End_time,
                                     Description: this.dataCld_insert.Description,
+                                    Colors: this.colors_room,
                                 }).then(function(response) {
                                     app.cencalmeetcard();
                                     app.fetchAllData();
+                                    app.show_main();
                                     const Toast = Swal.mixin({
                                         toast: true,
                                         position: 'bottom-end',

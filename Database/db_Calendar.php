@@ -5,7 +5,7 @@ $data = array();
 if($received_data->action == 'fetchall')
 {
  $query = "
- SELECT MeetingRoom_ID, NameRoom, Sday, Stime, Etime, Description FROM nameroom,meetingroom  WHERE meetingroom.NameRoom_ID = nameroom.NameRoom_ID and User_ID = '" . $received_data->User_ID . "' ORDER BY MeetingRoom_ID ASC
+ SELECT MeetingRoom_ID, NameRoom, Sday, Stime, Etime, Description, Colors FROM nameroom,meetingroom  WHERE meetingroom.NameRoom_ID = nameroom.NameRoom_ID and User_ID = '" . $received_data->User_ID . "' ORDER BY MeetingRoom_ID ASC
  ";
 //   ORDER BY User_id DESC
  $statement = $connect->prepare($query);
@@ -38,7 +38,8 @@ if($received_data->action == 'insert')
     ':Start_day' => $received_data->Start_day,
     ':Start_time' => $received_data->Start_time,
     ':End_time' => $received_data->End_time,
-    ':Description' => $received_data->Description
+    ':Description' => $received_data->Description,
+    ':Colors' => $received_data->Colors
  );
 
  $query = "
@@ -50,7 +51,8 @@ if($received_data->action == 'insert')
  Sday,
  Stime,
  Etime,
- Description) 
+ Description,
+ Colors) 
  VALUES (
  :MeetingRoom_ID,
  :User_ID,
@@ -59,7 +61,8 @@ if($received_data->action == 'insert')
  :Start_day,
  :Start_time,
  :End_time,
- :Description)
+ :Description,
+ :Colors)
  ";
 
  $statement = $connect->prepare($query);
@@ -104,7 +107,8 @@ if($received_data->action == 'update')
    ':Start_time' => $received_data->Start_time,
    ':End_time' => $received_data->End_time,
    ':Description' => $received_data->Description,
-   ':MeetingRoom_ID' => $received_data->MeetingRoom_ID
+   ':MeetingRoom_ID' => $received_data->MeetingRoom_ID,
+   ':Colors' => $received_data->Colors
  );
 
  $query = "
@@ -113,7 +117,8 @@ if($received_data->action == 'update')
  Sday = :Start_day,
  Stime = :Start_time,
  Etime = :End_time,
- Description = :Description
+ Description = :Description,
+ Colors = :Colors
  WHERE MeetingRoom_ID = :MeetingRoom_ID
  ";
 
@@ -166,7 +171,7 @@ if ($received_data->action == 'fetchCheckcal') {
 }
 if ($received_data->action == 'fetchcalendar') {
   $query = "
-SELECT CONCAT('ห้องประชุม : ',NameRoom,' ติดต่อ :',Phone,' ',Email,' คำอธิบาย :',Description) AS name,CONCAT(Sday,' ',Stime) AS start,CONCAT(Sday,' ',Etime) AS end FROM nameroom,meetingroom,user WHERE meetingroom.NameRoom_ID = nameroom.NameRoom_ID and meetingroom.User_id = user.User_id and meetingroom.NameRoom_ID = '".$received_data->NameRoom_ID."'
+SELECT CONCAT('ห้องประชุม : ',NameRoom,' ติดต่อ :',Phone,' ',Email,' คำอธิบาย :',Description) AS name,CONCAT(Sday,' ',Stime) AS start,CONCAT(Sday,' ',Etime) AS end,Colors AS color FROM nameroom,meetingroom,user WHERE meetingroom.NameRoom_ID = nameroom.NameRoom_ID and meetingroom.User_id = user.User_id and meetingroom.NameRoom_ID = '".$received_data->NameRoom_ID."'
  ";
   //   ORDER BY User_id DESC
   $statement = $connect->prepare($query);
@@ -178,7 +183,7 @@ SELECT CONCAT('ห้องประชุม : ',NameRoom,' ติดต่อ 
 }
 if ($received_data->action == 'fetchcalendar_all') {
   $query = "
-SELECT CONCAT('ห้องประชุม : ',NameRoom,' ติดต่อ :',Phone,' ',Email,' คำอธิบาย :',Description) AS name,CONCAT(Sday,' ',Stime) AS start,CONCAT(Sday,' ',Etime) AS end FROM nameroom,meetingroom,user WHERE meetingroom.NameRoom_ID = nameroom.NameRoom_ID and meetingroom.User_id = user.User_id
+SELECT CONCAT('ห้องประชุม : ',NameRoom,' ติดต่อ :',Phone,' ',Email,' คำอธิบาย :',Description) AS name,CONCAT(Sday,' ',Stime) AS start,CONCAT(Sday,' ',Etime) AS end,Colors AS color FROM nameroom,meetingroom,user WHERE meetingroom.NameRoom_ID = nameroom.NameRoom_ID and meetingroom.User_id = user.User_id
  ";
   //   ORDER BY User_id DESC
   $statement = $connect->prepare($query);
