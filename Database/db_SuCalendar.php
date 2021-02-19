@@ -36,7 +36,6 @@ if ($received_data->action == 'insert') {
         ':Start_time' => $received_data->Start_time,
         ':End_time' => $received_data->End_time,
         ':Description' => $received_data->Description,
-        ':Colors' => $received_data->Colors
     );
 
     $query = "
@@ -48,8 +47,7 @@ if ($received_data->action == 'insert') {
  Sday,
  Stime,
  Etime,
- Description,
- Colors) 
+ Description) 
  VALUES (
  :MeetingRoom_ID,
  :User_ID,
@@ -58,8 +56,7 @@ if ($received_data->action == 'insert') {
  :Start_day,
  :Start_time,
  :End_time,
- :Description,
- :Colors)
+ :Description)
  ";
 
     $statement = $connect->prepare($query);
@@ -100,8 +97,7 @@ if ($received_data->action == 'update') {
         ':Start_time' => $received_data->Start_time,
         ':End_time' => $received_data->End_time,
         ':Description' => $received_data->Description,
-        ':MeetingRoom_ID' => $received_data->MeetingRoom_ID,
-        ':Colors' => $received_data->Colors
+        ':MeetingRoom_ID' => $received_data->MeetingRoom_ID
     );
 
     $query = "
@@ -110,8 +106,7 @@ if ($received_data->action == 'update') {
  Sday = :Start_day,
  Stime = :Start_time,
  Etime = :End_time,
- Description = :Description,
- Colors = :Colors
+ Description = :Description
  WHERE MeetingRoom_ID = :MeetingRoom_ID
  ";
 

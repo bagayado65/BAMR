@@ -61,6 +61,8 @@
 
                                             <v-col>
                                                 <v-text-field class="mr-2 ml-2" v-model="nameroom_insert.NameRoom"></v-text-field>
+                                                <v-text>สีห้อง {{ colors_room }}</v-text>
+                                                <v-color-picker v-model="colors_room" mode="hex" hide-inputs hide-canvas></v-color-picker>
                                             </v-col>
                                             <v-col class="text-right">
                                                 <v-btn @click="insert_axios_name()" color="success">ยืนยัน</v-btn>
@@ -93,8 +95,12 @@
                                                 </thead>
                                                 <tbody>
                                                     <tr v-for="item in nameroom" :key="item.NameRoom_ID">
-                                                        <td class="text-center">{{ item.NameRoom_ID }}</td>
-                                                        <td class="text-center">{{ item.NameRoom }}</td>
+                                                        <td class="text-center">
+                                                            {{ item.NameRoom_ID }}
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <v-badge :color="item.Colors" dot>{{ item.NameRoom }} </v-badge>
+                                                        </td>
                                                         <td class="text-center" v-if="item.NameRoom_ID != 1">
                                                             <v-btn @click="edit_data_name(item.NameRoom_ID)" color="orange" icon>
                                                                 <v-icon class="mt-2">mdi-border-color</v-icon>
@@ -141,6 +147,8 @@
                                                         <v-spacer></v-spacer>
                                                         <div>
                                                             <v-text-field v-model="nameroom_edit.NameRoom"></v-text-field>
+                                                            <v-text>สีห้อง {{ colors_room }}</v-text>
+                                                            <v-color-picker v-model="colors_room" mode="hex" hide-inputs hide-canvas></v-color-picker>
                                                         </div>
                                                     </v-col>
                                                 </v-row>
@@ -363,8 +371,8 @@
                                                         <v-col class="ml-6 mt-4">
                                                             <v-select v-model="dataCld_insert.NameRoom" :items="nameroom" item-text="NameRoom" item-value="NameRoom_ID" item-disabled="Disableval" label="ชื่อห้องประชุม" dense></v-select>
                                                             <v-spacer></v-spacer>
-                                                            <v-text>สีห้อง {{ colors_room }}</v-text>
-                                                            <v-color-picker v-model="colors_room" mode="hex" hide-inputs hide-canvas></v-color-picker>
+                                                            <!-- <v-text>สีห้อง {{ colors_room }}</v-text>
+                                                            <v-color-picker v-model="colors_room" mode="hex" hide-inputs hide-canvas></v-color-picker> -->
                                                         </v-col>
                                                     </v-row>
                                                     <v-divider></v-divider>
@@ -540,11 +548,9 @@
                                                 <v-divider></v-divider>
                                                 <v-row>
                                                     <v-col class="ml-6 mt-4">
-                                                        <v-select v-model="dataCld_edit.NameRoom_ID" :items="nameroom" item-text="NameRoom" item-value="NameRoom_ID" item-disabled="Disableval" label="ชื่อห้องประชุม" dense></v-select>
+                                                        <v-select v-model="dataCld_edit.NameRoom_ID" @change="fetch_checktime1()" :items="nameroom" item-text="NameRoom" item-value="NameRoom_ID" item-disabled="Disableval" label="ชื่อห้องประชุม" dense></v-select>
                                                         {{ dataCld_edit.NameRoom }}
                                                         <v-spacer></v-spacer>
-                                                        <v-text>สีห้อง {{ colors_room }}</v-text>
-                                                        <v-color-picker v-model="colors_room" mode="hex" hide-inputs hide-canvas></v-color-picker>
                                                     </v-col>
                                                 </v-row>
                                                 <v-divider></v-divider>
@@ -587,6 +593,71 @@
                         </v-col>
                     </v-row>
                 </v-container>
+                <v-tooltip v-if="OpenShowmain.edit_date_room == true" top>
+                    <template v-slot:activator="{ on, attrs }">
+                        <v-btn @click="showdatacall = !showdatacall,fetch_alls()" fab small dark bottom left class="primary ml-10" v-bind="attrs" v-on="on">
+                            <v-icon>mdi-chevron-up</v-icon>
+                        </v-btn>
+                    </template>
+                    <span>ดูห้องไม่ว่างในตอนนี้</span>
+                </v-tooltip>
+                <v-dialog v-model="showdatacall" persistent transition="dialog-bottom-transition" max-width="76%">
+                    <v-card>
+                        <!-- v-if="i != 0" -->
+                        <v-card-title>
+                            <v-text>
+                                ห้องไม่ว่าง {{ today_SA }}
+                            </v-text>
+                            <v-spacer></v-spacer>
+                            <v-btn @click="showdatacall = !showdatacall" color="red" icon>
+                                <v-icon>
+                                    mdi-close
+                                </v-icon>
+                            </v-btn>
+                        </v-card-title>
+                        <v-list>
+                            <v-list-item-group>
+                                <v-list-item v-for="(itemes,i) in sentarall" :key="i">
+                                    <v-list-item-content>
+                                        <v-list-item-title>
+                                            <v-badge color="red" dot>
+                                                <v-text>
+                                                    ห้องประชุม : {{ itemes.NameRoom }}
+                                                    <v-text class="red--text">
+                                                        ไม่ว่างในตอนนี้
+                                                    </v-text>
+                                                </v-text>
+                                            </v-badge>
+                                        </v-list-item-title>
+                                    </v-list-item-content>
+                                </v-list-item>
+                            </v-list-item-group>
+                        </v-list>
+                        <v-card-title>
+                            <v-text>
+                                ห้องว่าง {{ today_SA }}
+                            </v-text>
+                        </v-card-title>
+                        <v-list>
+                            <v-list-item-group>
+                                <v-list-item v-for="(itemes,i) in sentarall_last" :key="i">
+                                    <v-list-item-content>
+                                        <v-list-item-title>
+                                            <v-badge color="green" dot>
+                                                <v-text>
+                                                    ห้องประชุม : {{ itemes.NameRoom }}
+                                                    <v-text class="green--text">
+                                                        ว่างในตอนนี้
+                                                    </v-text>
+                                                </v-text>
+                                            </v-badge>
+                                        </v-list-item-title>
+                                    </v-list-item-content>
+                                </v-list-item>
+                            </v-list-item-group>
+                        </v-list>
+                    </v-card>
+                </v-dialog>
             </v-main>
         </v-app>
     </div>
@@ -630,7 +701,7 @@
                 }
             }
         }
-        var today = new Date();
+        // var today = new Date();
         var app = new Vue({
             el: '#app',
             vuetify: new Vuetify(),
@@ -708,8 +779,10 @@
                 selectCalendar: '',
                 editcard_usersa: false,
                 show_calendar: false,
+                showdatacall: false,
                 counttime: '0',
                 todays: new Date(),
+                today_SA: today.toLocaleString(),
                 type: 'month',
                 typeToLabel: {
                     month: 'Month',
@@ -725,6 +798,8 @@
                 },
                 numberelo: null,
                 colors_room: '',
+                sentarall: '',
+                sentarall_last: '',
             },
             computed: {},
             watch: {},
@@ -774,6 +849,20 @@
                     this.editcard = false
                     this.editcard_name = false
                     this.editcard_usersa = false
+                },
+                fetch_alls: function() {
+                    axios.post('../Database/db_Calendar.php', {
+                        action: 'autoChess',
+                    }).then(function(response) {
+                        app.sentarall = response.data;
+                    });
+                    axios.post('../Database/db_Calendar.php', {
+                        action: 'autoChess1',
+                    }).then(function(response) {
+                        app.sentarall_last = response.data;
+                    });
+                    var todayjs = new Date()
+                    this.today_SA = todayjs.toLocaleString()
                 },
                 fetch_calendar: function() {
                     if (this.selectCalendar == 1) {
@@ -975,11 +1064,13 @@
                         axios.post('../Database/db_Nameroom.php', {
                             action: 'update',
                             NameRoom_ID: app.nameroom_edit.NameRoom_ID,
-                            NameRoom: app.nameroom_edit.NameRoom
+                            NameRoom: app.nameroom_edit.NameRoom,
+                            Colors: app.colors_room
                         }).then(function(response) {
                             app.fetchAllData();
                             app.fetch_nameroom();
                             app.cencalmeetcard();
+                            app.show_main();
                             app.nameroom_edit.NameRoom_ID = null;
                             app.nameroom_edit.NameRoom = '';
                             const Toast = Swal.mixin({
@@ -1007,68 +1098,74 @@
                     }
                 },
                 edit_axios: function() {
-                    console.log(app.dataCld_edit.NameRoom_ID)
-                    if (this.dataCld_edit.NameRoom !== null) {
-                        if (this.dataCld_edit.Start_day != '' && this.dataCld_edit.Start_time != '' && this.dataCld_edit.End_time != '') {
-                            if (this.counttime == '0') {
-                                axios.post('../Database/db_SuCalendar.php', {
-                                    action: 'update',
-                                    NameRoom_ID: app.dataCld_edit.NameRoom_ID,
-                                    Start_day: app.dataCld_edit.Start_day,
-                                    Start_time: app.dataCld_edit.Start_time,
-                                    End_time: app.dataCld_edit.End_time,
-                                    Description: app.dataCld_edit.Description,
-                                    MeetingRoom_ID: app.dataCld_edit.MeetingRoom_ID,
-                                    Colors: app.colors_room,
-                                }).then(function(response) {
-                                    app.fetchAllData();
-                                    app.cencalmeetcard();
-                                    app.show_main();
-                                    app.dataCld_edit.NameRoom_ID = null;
+                    if (this.dataCld_edit.Start_time < this.dataCld_edit.End_time) {
+                        if (this.dataCld_edit.NameRoom !== null) {
+                            if (this.dataCld_edit.Start_day != '' && this.dataCld_edit.Start_time != '' && this.dataCld_edit.End_time != '') {
+                                if (this.counttime == '0') {
+                                    axios.post('../Database/db_SuCalendar.php', {
+                                        action: 'update',
+                                        NameRoom_ID: app.dataCld_edit.NameRoom_ID,
+                                        Start_day: app.dataCld_edit.Start_day,
+                                        Start_time: app.dataCld_edit.Start_time,
+                                        End_time: app.dataCld_edit.End_time,
+                                        Description: app.dataCld_edit.Description,
+                                        MeetingRoom_ID: app.dataCld_edit.MeetingRoom_ID,
+                                    }).then(function(response) {
+                                        app.fetchAllData();
+                                        app.cencalmeetcard();
+                                        app.show_main();
+                                        app.dataCld_edit.NameRoom_ID = null;
+                                        app.dataCld_edit.Start_day = '';
+                                        app.dataCld_edit.Start_time = '';
+                                        app.dataCld_edit.End_time = '';
+                                        app.dataCld_edit.Description = '';
+                                        const Toast = Swal.mixin({
+                                            toast: true,
+                                            position: 'bottom-end',
+                                            showConfirmButton: false,
+                                            timer: 2000,
+                                            timerProgressBar: true,
+                                            didOpen: (toast) => {
+                                                toast.addEventListener('mouseenter', Swal.stopTimer)
+                                                toast.addEventListener('mouseleave', Swal.resumeTimer)
+                                            }
+                                        })
+                                        Toast.fire({
+                                            icon: 'success',
+                                            title: 'แก้ไขวันห้องประชุม สำเร็จ!!'
+                                        })
+                                    });
+                                    this.range.start = '';
+                                    this.range.end = '';
+                                } else {
+                                    Swal.fire(
+                                        'เวลาทับกัน!!',
+                                        'วันที่/เวลา!!',
+                                        'warning'
+                                    )
                                     app.dataCld_edit.Start_day = '';
                                     app.dataCld_edit.Start_time = '';
                                     app.dataCld_edit.End_time = '';
-                                    app.dataCld_edit.Description = '';
-                                    const Toast = Swal.mixin({
-                                        toast: true,
-                                        position: 'bottom-end',
-                                        showConfirmButton: false,
-                                        timer: 2000,
-                                        timerProgressBar: true,
-                                        didOpen: (toast) => {
-                                            toast.addEventListener('mouseenter', Swal.stopTimer)
-                                            toast.addEventListener('mouseleave', Swal.resumeTimer)
-                                        }
-                                    })
-                                    Toast.fire({
-                                        icon: 'success',
-                                        title: 'แก้ไขวันห้องประชุม สำเร็จ!!'
-                                    })
-                                });
-                                this.range.start = '';
-                                this.range.end = '';
+                                    app.counttime = 0;
+                                }
                             } else {
                                 Swal.fire(
-                                    'เวลาทับกัน!!',
+                                    'ไม่มีข้อมูล!!',
                                     'วันที่/เวลา!!',
                                     'warning'
                                 )
-                                app.dataCld_edit.Start_day = '';
-                                app.dataCld_edit.Start_time = '';
-                                app.dataCld_edit.End_time = '';
-                                app.counttime = 0;
                             }
                         } else {
                             Swal.fire(
                                 'ไม่มีข้อมูล!!',
-                                'วันที่/เวลา!!',
+                                'ชื่อห้อง!!',
                                 'warning'
                             )
                         }
                     } else {
                         Swal.fire(
-                            'ไม่มีข้อมูล!!',
-                            'ชื่อห้อง!!',
+                            'เวลา!!',
+                            'ห้ามเลือกเวลาข้ามวัน!!',
                             'warning'
                         )
                     }
@@ -1077,11 +1174,13 @@
                     if (this.nameroom_insert.NameRoom != '') {
                         axios.post('../Database/db_Nameroom.php', {
                             action: 'insert',
-                            NameRoom: this.nameroom_insert.NameRoom
+                            NameRoom: this.nameroom_insert.NameRoom,
+                            Colors: app.colors_room
                         }).then(function(response) {
                             app.fetch_nameroom();
                             app.cencalmeetcard();
                             app.fetchAllData();
+                            app.show_main();
                             const Toast = Swal.mixin({
                                 toast: true,
                                 position: 'bottom-end',
@@ -1108,70 +1207,77 @@
                     }
                 },
                 insert_axios: function() {
-                    if (this.dataCld_insert.NameRoom !== null) {
-                        if (this.dataCld_insert.Start_day != '' && this.dataCld_insert.Start_time != '' && this.dataCld_insert.End_time != '') {
-                            if (this.counttime == '0') {
-                                console.log('data =', this.counttime)
-                                this.dataCld_insert.WhoCreate = this.dataCld_insert.User_ID
-                                // this.dataCld_insert.Whotime_Create = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
-                                axios.post('../Database/db_SuCalendar.php', {
-                                    action: 'insert',
-                                    MeetingRoom_ID: this.dataCld_insert.MeetingRoom_ID,
-                                    User_ID: this.dataCld_insert.User_ID,
-                                    NameRoom_ID: this.dataCld_insert.NameRoom,
-                                    Numbar_User: this.dataCld_insert.Numbar_User,
-                                    Start_day: this.dataCld_insert.Start_day,
-                                    Start_time: this.dataCld_insert.Start_time,
-                                    End_time: this.dataCld_insert.End_time,
-                                    Description: this.dataCld_insert.Description,
-                                    Colors: this.colors_room,
-                                }).then(function(response) {
-                                    app.cencalmeetcard();
-                                    app.fetchAllData();
-                                    app.show_main();
-                                    const Toast = Swal.mixin({
-                                        toast: true,
-                                        position: 'bottom-end',
-                                        showConfirmButton: false,
-                                        timer: 2000,
-                                        timerProgressBar: true,
-                                        didOpen: (toast) => {
-                                            toast.addEventListener('mouseenter', Swal.stopTimer)
-                                            toast.addEventListener('mouseleave', Swal.resumeTimer)
-                                        }
-                                    })
-                                    Toast.fire({
-                                        icon: 'success',
-                                        title: 'จองวันห้องประชุม สำเร็จ!!'
-                                    })
-                                });
-                                this.dataCld_insert.NameRoom = null;
-                                this.dataCld_insert.Start_day = '';
-                                this.dataCld_insert.Start_time = '';
-                                this.dataCld_insert.End_time = '';
-                                this.dataCld_insert.Description = '';
+                    if (this.dataCld_insert.Start_time < this.dataCld_insert.End_time) {
+                        if (this.dataCld_insert.NameRoom !== null) {
+                            if (this.dataCld_insert.Start_day != '' && this.dataCld_insert.Start_time != '' && this.dataCld_insert.End_time != '') {
+                                if (this.counttime == '0') {
+                                    console.log('data =', this.counttime)
+                                    this.dataCld_insert.WhoCreate = this.dataCld_insert.User_ID
+                                    // this.dataCld_insert.Whotime_Create = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+                                    axios.post('../Database/db_SuCalendar.php', {
+                                        action: 'insert',
+                                        MeetingRoom_ID: this.dataCld_insert.MeetingRoom_ID,
+                                        User_ID: this.dataCld_insert.User_ID,
+                                        NameRoom_ID: this.dataCld_insert.NameRoom,
+                                        Numbar_User: this.dataCld_insert.Numbar_User,
+                                        Start_day: this.dataCld_insert.Start_day,
+                                        Start_time: this.dataCld_insert.Start_time,
+                                        End_time: this.dataCld_insert.End_time,
+                                        Description: this.dataCld_insert.Description,
+                                    }).then(function(response) {
+                                        app.cencalmeetcard();
+                                        app.fetchAllData();
+                                        app.show_main();
+                                        const Toast = Swal.mixin({
+                                            toast: true,
+                                            position: 'bottom-end',
+                                            showConfirmButton: false,
+                                            timer: 2000,
+                                            timerProgressBar: true,
+                                            didOpen: (toast) => {
+                                                toast.addEventListener('mouseenter', Swal.stopTimer)
+                                                toast.addEventListener('mouseleave', Swal.resumeTimer)
+                                            }
+                                        })
+                                        Toast.fire({
+                                            icon: 'success',
+                                            title: 'จองวันห้องประชุม สำเร็จ!!'
+                                        })
+                                    });
+                                    this.dataCld_insert.NameRoom = null;
+                                    this.dataCld_insert.Start_day = '';
+                                    this.dataCld_insert.Start_time = '';
+                                    this.dataCld_insert.End_time = '';
+                                    this.dataCld_insert.Description = '';
+                                } else {
+                                    Swal.fire(
+                                        'เวลาทับกัน!!',
+                                        'วันที่/เวลา!!',
+                                        'warning'
+                                    )
+                                    this.dataCld_insert.Start_day = ''
+                                    this.dataCld_insert.Start_time = ''
+                                    this.dataCld_insert.End_time = ''
+                                    this.counttime = '0'
+                                }
                             } else {
                                 Swal.fire(
-                                    'เวลาทับกัน!!',
+                                    'ไม่มีข้อมูล!!',
                                     'วันที่/เวลา!!',
                                     'warning'
                                 )
-                                this.dataCld_insert.Start_day = ''
-                                this.dataCld_insert.Start_time = ''
-                                this.dataCld_insert.End_time = ''
-                                this.counttime = '0'
                             }
                         } else {
                             Swal.fire(
                                 'ไม่มีข้อมูล!!',
-                                'วันที่/เวลา!!',
+                                'ชื่อห้อง!!',
                                 'warning'
                             )
                         }
                     } else {
                         Swal.fire(
-                            'ไม่มีข้อมูล!!',
-                            'ชื่อห้อง!!',
+                            'เวลา!!',
+                            'ห้ามเลือกเวลาข้ามวัน!!',
                             'warning'
                         )
                     }
@@ -1193,6 +1299,9 @@
                                 MeetingRoom_ID: id
                             }).then(function(response) {
                                 app.fetchAllData();
+                                app.fetchAllData_onlyuser()
+                                app.fetch_nameroom()
+                                app.fetchAll_id_data()
                             });
                             Swal.fire(
                                 'ลบสำเร็จ!',
@@ -1220,6 +1329,8 @@
                             }).then(function(response) {
                                 app.fetchAllData();
                                 app.fetch_nameroom();
+                                app.fetch_alls();
+                                app.show_main();
                             });
                             Swal.fire(
                                 'ลบสำเร็จ!',

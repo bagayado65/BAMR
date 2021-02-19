@@ -42,7 +42,6 @@ if($received_data->action == 'insert')
     ':Start_time' => $received_data->Start_time,
     ':End_time' => $received_data->End_time,
     ':Description' => $received_data->Description,
-    ':Colors' => $received_data->Colors
  );
 
  $query = "
@@ -54,8 +53,7 @@ if($received_data->action == 'insert')
  Sday,
  Stime,
  Etime,
- Description,
- Colors) 
+ Description) 
  VALUES (
  :MeetingRoom_ID,
  :User_ID,
@@ -64,8 +62,7 @@ if($received_data->action == 'insert')
  :Start_day,
  :Start_time,
  :End_time,
- :Description,
- :Colors)
+ :Description)
  ";
 
  $statement = $connect->prepare($query);
@@ -111,7 +108,6 @@ if($received_data->action == 'update')
    ':End_time' => $received_data->End_time,
    ':Description' => $received_data->Description,
    ':MeetingRoom_ID' => $received_data->MeetingRoom_ID,
-   ':Colors' => $received_data->Colors
  );
 
  $query = "
@@ -120,8 +116,7 @@ if($received_data->action == 'update')
  Sday = :Start_day,
  Stime = :Start_time,
  Etime = :End_time,
- Description = :Description,
- Colors = :Colors
+ Description = :Description
  WHERE MeetingRoom_ID = :MeetingRoom_ID
  ";
 
@@ -198,6 +193,22 @@ SELECT CONCAT('ห้องประชุม : ',NameRoom,' ติดต่อ 
 }
 if ($received_data->action == 'autoChess') {
   $query = "
+SELECT DISTINCT nameroom.NameRoom FROM `meetingroom`,`nameroom` WHERE (
+	'$time_now' BETWEEN Stime AND Etime
+) AND meetingroom.NameRoom_ID = nameroom.NameRoom_ID AND Sday = '$date_now'
+ ";
+  //   ORDER BY User_id DESC
+  $statement = $connect->prepare($query);
+  $statement->execute();
+  while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
+    $data[] = $row;
+  }
+  echo json_encode($data);
+}
+if ($received_data->action == 'autoChess1') {
+  $query = "
+SELECT nameroom.NameRoom FROM `nameroom` WHERE NameRoom_ID > 1
+EXCEPT
 SELECT DISTINCT nameroom.NameRoom FROM `meetingroom`,`nameroom` WHERE (
 	'$time_now' BETWEEN Stime AND Etime
 ) AND meetingroom.NameRoom_ID = nameroom.NameRoom_ID AND Sday = '$date_now'

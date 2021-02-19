@@ -114,8 +114,6 @@
                                                         <v-col class="ml-6 mt-4">
                                                             <v-select v-model="dataCld_insert.NameRoom" :items="nameroom" item-text="NameRoom" item-value="NameRoom_ID" item-disabled="Disableval" label="ชื่อห้องประชุม" dense></v-select>
                                                             <v-spacer></v-spacer>
-                                                            <v-text>สีห้อง {{ colors_room }}</v-text>
-                                                            <v-color-picker v-model="colors_room" mode="hex" hide-inputs hide-canvas></v-color-picker>
                                                         </v-col>
                                                     </v-row>
                                                     <v-divider></v-divider>
@@ -289,11 +287,10 @@
                                                 <v-divider></v-divider>
                                                 <v-row>
                                                     <v-col class="ml-6 mt-4">
-                                                        <v-select v-model="dataCld_edit.NameRoom_ID" :items="nameroom" item-text="NameRoom" item-value="NameRoom_ID" item-disabled="Disableval" label="ชื่อห้องประชุม" dense></v-select>
+                                                        <v-select v-model="dataCld_edit.NameRoom_ID" @change="fetch_checktime1()" :items="nameroom" item-text="NameRoom" item-value="NameRoom_ID" item-disabled="Disableval" label="ชื่อห้องประชุม" dense></v-select>
                                                         {{ dataCld_edit.NameRoom }}
                                                         <v-spacer></v-spacer>
-                                                        <v-text>สีห้อง {{ colors_room }}</v-text>
-                                                        <v-color-picker v-model="colors_room" mode="hex" hide-inputs hide-canvas></v-color-picker>
+
                                                     </v-col>
                                                 </v-row>
                                                 <v-divider></v-divider>
@@ -376,6 +373,29 @@
                                 </v-list-item>
                             </v-list-item-group>
                         </v-list>
+                        <v-card-title>
+                            <v-text>
+                                ห้องว่าง {{ today_SA }}
+                            </v-text>
+                        </v-card-title>
+                        <v-list>
+                            <v-list-item-group>
+                                <v-list-item v-for="(itemes,i) in sentarall_last" :key="i">
+                                    <v-list-item-content>
+                                        <v-list-item-title>
+                                            <v-badge color="green" dot>
+                                                <v-text>
+                                                    ห้องประชุม : {{ itemes.NameRoom }}
+                                                    <v-text class="green--text">
+                                                        ว่างในตอนนี้
+                                                    </v-text>
+                                                </v-text>
+                                            </v-badge>
+                                        </v-list-item-title>
+                                    </v-list-item-content>
+                                </v-list-item>
+                            </v-list-item-group>
+                        </v-list>
                     </v-card>
                 </v-dialog>
             </v-main>
@@ -433,7 +453,7 @@
                 }
             }
         }
-        var today = new Date();
+        // var today = new Date();
         var app = new Vue({
             el: '#app',
             vuetify: new Vuetify(),
@@ -471,7 +491,7 @@
                 show_calendar: false,
                 counttime: '0',
                 todays: new Date(),
-                today: today.toLocaleString(),
+                today_SA: today.toLocaleString(),
                 type: 'month',
                 typeToLabel: {
                     month: 'Month',
@@ -489,6 +509,7 @@
                 colors_room: '',
                 showdatacall: false,
                 sentarall: '',
+                sentarall_last: '',
             },
             computed: {},
             watch: {},
@@ -553,6 +574,13 @@
                     }).then(function(response) {
                         app.sentarall = response.data;
                     });
+                    axios.post('../Database/db_Calendar.php', {
+                        action: 'autoChess1',
+                    }).then(function(response) {
+                        app.sentarall_last = response.data;
+                    });
+                    var todayjs = new Date()
+                    this.today_SA = todayjs.toLocaleString()
                 },
                 fetch_checktime: function() {
                     axios.post('../Database/db_Calendar.php', {
@@ -634,140 +662,154 @@
                     this.editcard = true
                 },
                 edit_axios: function() {
-                    console.log(this.dataCld_edit)
-                    if (this.dataCld_edit.NameRoom !== null) {
-                        if (this.dataCld_edit.Start_day != '' && this.dataCld_edit.Start_time != '' && this.dataCld_edit.End_time != '') {
-                            if (this.counttime == '0') {
-                                axios.post('../Database/db_Calendar.php', {
-                                    action: 'update',
-                                    NameRoom_ID: app.dataCld_edit.NameRoom_ID,
-                                    Start_day: app.dataCld_edit.Start_day,
-                                    Start_time: app.dataCld_edit.Start_time,
-                                    End_time: app.dataCld_edit.End_time,
-                                    Description: app.dataCld_edit.Description,
-                                    MeetingRoom_ID: app.dataCld_edit.MeetingRoom_ID,
-                                    Colors: app.colors_room,
-                                }).then(function(response) {
-                                    app.fetchAllData();
-                                    app.cencalmeetcard();
-                                    app.show_main();
-                                    app.dataCld_edit.NameRoom_ID = null;
+                    if (this.dataCld_edit.Start_time < this.dataCld_edit.End_time) {
+                        if (this.dataCld_edit.NameRoom !== null) {
+                            if (this.dataCld_edit.Start_day != '' && this.dataCld_edit.Start_time != '' && this.dataCld_edit.End_time != '') {
+                                if (this.counttime == '0') {
+                                    axios.post('../Database/db_Calendar.php', {
+                                        action: 'update',
+                                        NameRoom_ID: app.dataCld_edit.NameRoom_ID,
+                                        Start_day: app.dataCld_edit.Start_day,
+                                        Start_time: app.dataCld_edit.Start_time,
+                                        End_time: app.dataCld_edit.End_time,
+                                        Description: app.dataCld_edit.Description,
+                                        MeetingRoom_ID: app.dataCld_edit.MeetingRoom_ID,
+                                    }).then(function(response) {
+                                        app.fetchAllData();
+                                        app.cencalmeetcard();
+                                        app.show_main();
+                                        app.dataCld_edit.NameRoom_ID = null;
+                                        app.dataCld_edit.Start_day = '';
+                                        app.dataCld_edit.Start_time = '';
+                                        app.dataCld_edit.End_time = '';
+                                        app.dataCld_edit.Description = '';
+                                        const Toast = Swal.mixin({
+                                            toast: true,
+                                            position: 'bottom-end',
+                                            showConfirmButton: false,
+                                            timer: 2000,
+                                            timerProgressBar: true,
+                                            didOpen: (toast) => {
+                                                toast.addEventListener('mouseenter', Swal.stopTimer)
+                                                toast.addEventListener('mouseleave', Swal.resumeTimer)
+                                            }
+                                        })
+                                        Toast.fire({
+                                            icon: 'success',
+                                            title: 'แก้ไขวันห้องประชุม สำเร็จ!!'
+                                        })
+                                    });
+                                    this.range.start = '';
+                                    this.range.end = '';
+                                } else {
+                                    Swal.fire(
+                                        'เวลาทับกัน!!',
+                                        'วันที่/เวลา!!',
+                                        'warning'
+                                    )
                                     app.dataCld_edit.Start_day = '';
                                     app.dataCld_edit.Start_time = '';
                                     app.dataCld_edit.End_time = '';
-                                    app.dataCld_edit.Description = '';
-                                    const Toast = Swal.mixin({
-                                        toast: true,
-                                        position: 'bottom-end',
-                                        showConfirmButton: false,
-                                        timer: 2000,
-                                        timerProgressBar: true,
-                                        didOpen: (toast) => {
-                                            toast.addEventListener('mouseenter', Swal.stopTimer)
-                                            toast.addEventListener('mouseleave', Swal.resumeTimer)
-                                        }
-                                    })
-                                    Toast.fire({
-                                        icon: 'success',
-                                        title: 'แก้ไขวันห้องประชุม สำเร็จ!!'
-                                    })
-                                });
-                                this.range.start = '';
-                                this.range.end = '';
+                                    app.counttime = 0;
+                                }
                             } else {
                                 Swal.fire(
-                                    'เวลาทับกัน!!',
+                                    'ไม่มีข้อมูล!!',
                                     'วันที่/เวลา!!',
                                     'warning'
                                 )
-                                app.dataCld_edit.Start_day = '';
-                                app.dataCld_edit.Start_time = '';
-                                app.dataCld_edit.End_time = '';
-                                app.counttime = 0;
                             }
                         } else {
                             Swal.fire(
                                 'ไม่มีข้อมูล!!',
-                                'วันที่/เวลา!!',
+                                'ชื่อห้อง!!',
                                 'warning'
                             )
                         }
                     } else {
                         Swal.fire(
-                            'ไม่มีข้อมูล!!',
-                            'ชื่อห้อง!!',
+                            'เวลา!!',
+                            'ห้ามเลือกเวลาข้ามวัน!!',
                             'warning'
                         )
                     }
                 },
                 insert_axios: function() {
-                    if (this.dataCld_insert.NameRoom !== null) {
-                        if (this.dataCld_insert.Start_day != '' && this.dataCld_insert.Start_time != '' && this.dataCld_insert.End_time != '') {
-                            if (this.counttime == '0') {
-                                console.log('data =', this.counttime)
-                                this.dataCld_insert.WhoCreate = this.dataCld_insert.User_ID
-                                // this.dataCld_insert.Whotime_Create = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
-                                axios.post('../Database/db_Calendar.php', {
-                                    action: 'insert',
-                                    MeetingRoom_ID: this.dataCld_insert.MeetingRoom_ID,
-                                    User_ID: this.dataCld_insert.User_ID,
-                                    NameRoom_ID: this.dataCld_insert.NameRoom,
-                                    Numbar_User: this.dataCld_insert.Numbar_User,
-                                    Start_day: this.dataCld_insert.Start_day,
-                                    Start_time: this.dataCld_insert.Start_time,
-                                    End_time: this.dataCld_insert.End_time,
-                                    Description: this.dataCld_insert.Description,
-                                    Colors: this.colors_room,
-                                }).then(function(response) {
-                                    app.cencalmeetcard();
-                                    app.fetchAllData();
-                                    app.show_main();
-                                    const Toast = Swal.mixin({
-                                        toast: true,
-                                        position: 'bottom-end',
-                                        showConfirmButton: false,
-                                        timer: 2000,
-                                        timerProgressBar: true,
-                                        didOpen: (toast) => {
-                                            toast.addEventListener('mouseenter', Swal.stopTimer)
-                                            toast.addEventListener('mouseleave', Swal.resumeTimer)
-                                        }
-                                    })
-                                    Toast.fire({
-                                        icon: 'success',
-                                        title: 'จองวันห้องประชุม สำเร็จ!!'
-                                    })
-                                });
-                                this.dataCld_insert.NameRoom = null;
-                                this.dataCld_insert.Start_day = '';
-                                this.dataCld_insert.Start_time = '';
-                                this.dataCld_insert.End_time = '';
-                                this.dataCld_insert.Description = '';
+                    if (this.dataCld_insert.Start_time < this.dataCld_insert.End_time) {
+                        if (this.dataCld_insert.NameRoom !== null) {
+                            if (this.dataCld_insert.Start_day != '' && this.dataCld_insert.Start_time != '' && this.dataCld_insert.End_time != '') {
+                                if (this.counttime == '0') {
+                                    console.log('data =', this.counttime)
+                                    this.dataCld_insert.WhoCreate = this.dataCld_insert.User_ID
+                                    // this.dataCld_insert.Whotime_Create = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+                                    axios.post('../Database/db_Calendar.php', {
+                                        action: 'insert',
+                                        MeetingRoom_ID: this.dataCld_insert.MeetingRoom_ID,
+                                        User_ID: this.dataCld_insert.User_ID,
+                                        NameRoom_ID: this.dataCld_insert.NameRoom,
+                                        Numbar_User: this.dataCld_insert.Numbar_User,
+                                        Start_day: this.dataCld_insert.Start_day,
+                                        Start_time: this.dataCld_insert.Start_time,
+                                        End_time: this.dataCld_insert.End_time,
+                                        Description: this.dataCld_insert.Description,
+                                    }).then(function(response) {
+                                        app.cencalmeetcard();
+                                        app.fetchAllData();
+                                        app.show_main();
+                                        const Toast = Swal.mixin({
+                                            toast: true,
+                                            position: 'bottom-end',
+                                            showConfirmButton: false,
+                                            timer: 2000,
+                                            timerProgressBar: true,
+                                            didOpen: (toast) => {
+                                                toast.addEventListener('mouseenter', Swal.stopTimer)
+                                                toast.addEventListener('mouseleave', Swal.resumeTimer)
+                                            }
+                                        })
+                                        Toast.fire({
+                                            icon: 'success',
+                                            title: 'จองวันห้องประชุม สำเร็จ!!'
+                                        })
+                                    });
+                                    this.dataCld_insert.NameRoom = null;
+                                    this.dataCld_insert.Start_day = '';
+                                    this.dataCld_insert.Start_time = '';
+                                    this.dataCld_insert.End_time = '';
+                                    this.dataCld_insert.Description = '';
+                                } else {
+                                    Swal.fire(
+                                        'เวลาทับกัน!!',
+                                        'วันที่/เวลา!!',
+                                        'warning'
+                                    )
+                                    this.dataCld_insert.Start_day = ''
+                                    this.dataCld_insert.Start_time = ''
+                                    this.dataCld_insert.End_time = ''
+                                    this.counttime = '0'
+                                }
                             } else {
                                 Swal.fire(
-                                    'เวลาทับกัน!!',
+                                    'ไม่มีข้อมูล!!',
                                     'วันที่/เวลา!!',
                                     'warning'
                                 )
-                                this.dataCld_insert.Start_day = ''
-                                this.dataCld_insert.Start_time = ''
-                                this.dataCld_insert.End_time = ''
-                                this.counttime = '0'
                             }
                         } else {
                             Swal.fire(
                                 'ไม่มีข้อมูล!!',
-                                'วันที่/เวลา!!',
+                                'ชื่อห้อง!!',
                                 'warning'
                             )
                         }
                     } else {
                         Swal.fire(
-                            'ไม่มีข้อมูล!!',
-                            'ชื่อห้อง!!',
+                            'เวลา!!',
+                            'ห้ามเลือกเวลาข้ามวัน!!',
                             'warning'
                         )
                     }
+
                 },
                 delete_data: function(id) {
                     Swal.fire({
@@ -786,6 +828,9 @@
                                 MeetingRoom_ID: id
                             }).then(function(response) {
                                 app.fetchAllData();
+                                app.fetch_nameroom();
+                                app.fetch_alls();
+                                app.show_main();
                             });
                             Swal.fire(
                                 'ลบสำเร็จ!',

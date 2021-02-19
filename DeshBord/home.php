@@ -142,6 +142,29 @@
                                 </v-list-item>
                             </v-list-item-group>
                         </v-list>
+                        <v-card-title>
+                            <v-text>
+                                ห้องว่าง {{ today_SA }}
+                            </v-text>
+                        </v-card-title>
+                        <v-list>
+                            <v-list-item-group>
+                                <v-list-item v-for="(itemes,i) in sentarall_last" :key="i">
+                                    <v-list-item-content>
+                                        <v-list-item-title>
+                                            <v-badge color="green" dot>
+                                                <v-text>
+                                                    ห้องประชุม : {{ itemes.NameRoom }}
+                                                    <v-text class="green--text">
+                                                        ว่างในตอนนี้
+                                                    </v-text>
+                                                </v-text>
+                                            </v-badge>
+                                        </v-list-item-title>
+                                    </v-list-item-content>
+                                </v-list-item>
+                            </v-list-item-group>
+                        </v-list>
                     </v-card>
                 </v-dialog>
             </v-main>
@@ -175,6 +198,7 @@
                 // numicons: 1,
                 showdatacall: false,
                 sentarall: '',
+                sentarall_last: '',
             },
             computed: {},
             watch: {},
@@ -225,6 +249,13 @@
                     }).then(function(response) {
                         app.sentarall = response.data;
                     });
+                    axios.post('../Database/db_Calendar.php', {
+                        action: 'autoChess1',
+                    }).then(function(response) {
+                        app.sentarall_last = response.data;
+                    });
+                    var todayjs = new Date()
+                    this.today_SA = todayjs.toLocaleString()
                 },
                 fetch_nameroom: function() {
                     axios.post('../Database/db_Nameroom.php', {

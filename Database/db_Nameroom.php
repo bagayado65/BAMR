@@ -4,7 +4,7 @@ $received_data = json_decode(file_get_contents("php://input"));
 $data = array();
 if ($received_data->action == 'fetchall') {
     $query = "
- SELECT NameRoom_ID, NameRoom, Disableval FROM nameroom ORDER BY NameRoom_ID ASC
+ SELECT NameRoom_ID, NameRoom, Disableval, Colors FROM nameroom ORDER BY NameRoom_ID ASC
  ";
     //   ORDER BY User_id DESC
     $statement = $connect->prepare($query);
@@ -16,7 +16,7 @@ if ($received_data->action == 'fetchall') {
 }
 if ($received_data->action == 'fetchSingle') {
     $query = "
- SELECT NameRoom_ID, NameRoom, Disableval FROM nameroom  WHERE NameRoom_ID = '" . $received_data->NameRoom_ID . "'
+ SELECT NameRoom_ID, NameRoom, Disableval, Colors FROM nameroom  WHERE NameRoom_ID = '" . $received_data->NameRoom_ID . "'
  ";
 
     $statement = $connect->prepare($query);
@@ -34,16 +34,17 @@ if ($received_data->action == 'fetchSingle') {
 }
 if ($received_data->action == 'insert') {
     $data = array(
-        ':NameRoom' => $received_data->NameRoom
+        ':NameRoom' => $received_data->NameRoom,
+        ':Colors' => $received_data->Colors
     );
 
     $query = "
  INSERT INTO NameRoom 
  (
- NameRoom,Disableval) 
+ NameRoom,Disableval,Colors) 
  VALUES (
  :NameRoom,
- '')
+ '',:Colors)
  ";
 
     $statement = $connect->prepare($query);
@@ -60,12 +61,14 @@ if ($received_data->action == 'update') {
     $data = array(
         ':NameRoom_ID' => $received_data->NameRoom_ID,
         ':NameRoom' => $received_data->NameRoom,
+        ':Colors' => $received_data->Colors
     );
 
     $query = "
     UPDATE nameroom 
     SET NameRoom_ID = :NameRoom_ID,
-    NameRoom = :NameRoom
+    NameRoom = :NameRoom,
+    Colors = :Colors
     WHERE NameRoom_ID = :NameRoom_ID
  ";
 
